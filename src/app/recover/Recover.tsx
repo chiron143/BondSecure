@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { buildDemandLetter, type Parties } from "@/lib/content/letters";
+import { LANGUAGES } from "@/lib/content/languages";
 import { DISCLAIMER, HELP_CONTACTS } from "@/lib/content/sources";
 import { buildClaimPackPdf } from "@/lib/pdf/claimPack";
 import { downloadPdf } from "@/lib/pdf/layout";
@@ -10,6 +11,7 @@ import { addDays, formatDate, todayIso } from "@/lib/rules/dates";
 import { buildVerdict } from "@/lib/rules/engine";
 import type { Agreement, CaseFacts, Residents, Who, YesNoUnsure } from "@/lib/rules/types";
 import { useStore } from "@/lib/store";
+import EvidenceReader from "./EvidenceReader";
 
 type Opt<T extends string> = { v: T; label: string; hint?: string };
 
@@ -83,6 +85,10 @@ export default function Recover() {
   );
   const [showVerdict, setShowVerdict] = useState(Boolean(store.facts));
   const [copied, setCopied] = useState(false);
+  const [lang, setLang] = useState("en");
+  const [translated, setTranslated] = useState<Record<string, Map<string, string>>>({});
+  const [translating, setTranslating] = useState(false);
+  const [translateError, setTranslateError] = useState("");
 
   const f = (patch: Partial<CaseFacts>) => setFacts((x) => ({ ...x, ...patch }));
   const p = (patch: Partial<Parties>) => setParties((x) => ({ ...x, ...patch }));
@@ -100,12 +106,59 @@ export default function Recover() {
 
   if (result) {
     const { verdict: v, letter } = result;
+    // Everything a student reads to understand their situation, but never the letter.
+    const explanation = [
+      v.title, v.summary, ...v.because, ...v.flags, ...v.nextSteps, ...v.getHelpIf,
+      ...v.deadlines.flatMap((d) => [d.label, d.note ?? ""]),
+    ].filter(Boolean);
+    const map = translated[lang];
+    const t = (s: string) => map?.get(s) ?? s;
+
+    async function translate(code: string) {
+      setLang(code);
+      setTranslateError("");
+      if (code === "en" || translated[code]) return;
+      setTranslating(true);
+      try {
+        const res = await fetch("/api/translate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ language: code, texts: explanation }),
+        });
+        const out = await res.json().catch(() => ({ error: `The server said ${res.status}.` }));
+        if (out.error) throw new Error(out.error);
+        setTranslated((x) => ({ ...x, [code]: new Map(explanation.map((s, n) => [s, out.translations[n]])) }));
+      } catch (e) {
+        setTranslateError((e as Error).message);
+        setLang("en");
+      } finally {
+        setTranslating(false);
+      }
+    }
+
     return (
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-        <button className="text-sm text-muted underline" onClick={() => setShowVerdict(false)}>← Change my answers</button>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <button className="text-sm text-muted underline" onClick={() => setShowVerdict(false)}>← Change my answers</button>
+          <label className="flex items-center gap-2 text-sm">
+            <span className="text-muted">Read this in</span>
+            <select className="field w-auto py-1.5 text-sm" value={lang} disabled={translating} onChange={(e) => translate(e.target.value)}>
+              {LANGUAGES.map((l) => <option key={l.code} value={l.code}>{l.native}</option>)}
+            </select>
+          </label>
+        </div>
+        {translating && <p className="mt-3 text-sm text-muted">Translating…</p>}
+        {translateError && <p className="mt-3 rounded-xl bg-warn-soft p-3 text-sm text-warn">Couldn&apos;t translate: {translateError}</p>}
+        {lang !== "en" && map && (
+          <p className="mt-3 rounded-xl bg-accent-soft p-3 text-sm">
+            Translated by AI to help you understand. The English version is the one that counts, and your letter stays in English
+            because that&apos;s what the landlord and NCAT read.{" "}
+            <button className="underline" onClick={() => setLang("en")}>Show English</button>
+          </p>
+        )}
         <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-accent">{v.lawName ?? "Your situation"} · {v.confidence}</p>
-        <h1 className="mt-2 font-serif text-3xl font-semibold sm:text-4xl">{v.title}</h1>
-        <p className="mt-4 text-lg">{v.summary}</p>
+        <h1 className="mt-2 font-serif text-3xl font-semibold sm:text-4xl">{t(v.title)}</h1>
+        <p className="mt-4 text-lg">{t(v.summary)}</p>
         <p className="mt-4 font-serif text-3xl font-semibold text-accent">
           {v.amountOwed.toLocaleString("en-AU", { style: "currency", currency: "AUD" })} <span className="text-base font-normal text-muted">owed to you</span>
         </p>
@@ -113,16 +166,16 @@ export default function Recover() {
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <div className="card">
             <h2 className="font-semibold">Why we think this</h2>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted">{v.because.map((b) => <li key={b}>{b}</li>)}</ul>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted">{v.because.map((b) => <li key={b}>{t(b)}</li>)}</ul>
           </div>
           <div className="card">
             <h2 className="font-semibold">Deadlines</h2>
             <ul className="mt-2 space-y-2 text-sm">
               {v.deadlines.map((d) => (
                 <li key={d.label}>
-                  <span className="text-muted">{d.label}</span>
+                  <span className="text-muted">{t(d.label)}</span>
                   {d.dueDate && <span className="block font-semibold">{formatDate(d.dueDate)}{d.daysOverdue ? <span className="text-warn"> · {d.daysOverdue} days ago</span> : null}</span>}
-                  {d.note && <span className="block text-xs text-muted">{d.note}</span>}
+                  {d.note && <span className="block text-xs text-muted">{t(d.note)}</span>}
                 </li>
               ))}
             </ul>
@@ -131,18 +184,18 @@ export default function Recover() {
 
         {v.flags.length > 0 && (
           <div className="mt-4 rounded-2xl bg-warn-soft p-5 text-sm text-warn">
-            <ul className="list-disc space-y-1 pl-5">{v.flags.map((x) => <li key={x}>{x}</li>)}</ul>
+            <ul className="list-disc space-y-1 pl-5">{v.flags.map((x) => <li key={x}>{t(x)}</li>)}</ul>
           </div>
         )}
 
         <div className="card mt-4">
           <h2 className="font-semibold">What to do, in order</h2>
-          <ol className="mt-2 list-decimal space-y-2 pl-5 text-[15px]">{v.nextSteps.map((s) => <li key={s}>{s}</li>)}</ol>
+          <ol className="mt-2 list-decimal space-y-2 pl-5 text-[15px]">{v.nextSteps.map((s) => <li key={s}>{t(s)}</li>)}</ol>
         </div>
 
         <div className="card mt-4">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="font-semibold">Your letter</h2>
+            <h2 className="font-semibold">Your letter <span className="text-xs font-normal text-muted">(English, as sent)</span></h2>
             <button className="btn-ghost py-2 text-sm" onClick={() => { navigator.clipboard.writeText(`${letter.subject}\n\n${letter.body}`); setCopied(true); }}>
               {copied ? "Copied" : "Copy"}
             </button>
@@ -179,7 +232,7 @@ export default function Recover() {
         </div>
 
         <div className="mt-8 rounded-2xl border border-line p-5 text-sm text-muted">
-          <p className="font-semibold text-ink">Get free help first if: {v.getHelpIf.join("; ")}.</p>
+          <p className="font-semibold text-ink">Get free help first if: {v.getHelpIf.map(t).join("; ")}.</p>
           <ul className="mt-2 space-y-1">{HELP_CONTACTS.map((c) => <li key={c.name}><a className="underline" href={c.url}>{c.name}</a>: {c.detail}</li>)}</ul>
           <p className="mt-3 text-xs">{DISCLAIMER}</p>
         </div>
@@ -194,6 +247,13 @@ export default function Recover() {
       <button className="mt-3 text-sm underline" onClick={() => { setFacts(EXAMPLE.facts); setParties(EXAMPLE.parties); }}>
         Fill in an example case
       </button>
+
+      <EvidenceReader
+        onApply={(found, who) => {
+          setFacts((x) => ({ ...x, ...found }));
+          setParties((x) => ({ ...x, ...who }));
+        }}
+      />
 
       <div className="card mt-6 space-y-7">
         <div>

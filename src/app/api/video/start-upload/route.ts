@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "That video is over 2 GB. Film a shorter walk-through." }, { status: 400 });
   }
   try {
-    const uploadUrl = await startResumableUpload(sizeBytes, mimeType, String(name ?? "move-in-video"));
+    const uploadUrl = await startResumableUpload(sizeBytes, mimeType, String(name ?? "move-in-video"), request.headers.get("origin"));
     return Response.json({ uploadUrl });
   } catch (e) {
     return Response.json({ error: (e as Error).message }, { status: 502 });

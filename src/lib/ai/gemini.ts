@@ -12,7 +12,7 @@ import "server-only";
 // If step 2 is blocked by CORS in the browser, fall back to Vercel Blob client uploads
 // and have the server stream the blob into Gemini (see SPEC.md, "Fallbacks").
 
-import { GoogleGenAI, MediaResolution, createPartFromUri } from "@google/genai";
+import { GoogleGenAI, MediaResolution, createPartFromUri, type Part } from "@google/genai";
 import type { MoveInAnalysis } from "../movein/types";
 import { MOVE_IN_PROMPT, MOVE_IN_SCHEMA } from "./prompts";
 
@@ -30,10 +30,13 @@ function key(): string {
 }
 
 /** Starts a resumable upload and returns the one-time upload URL for the browser. */
-export async function startResumableUpload(sizeBytes: number, mimeType: string, displayName: string) {
+export async function startResumableUpload(sizeBytes: number, mimeType: string, displayName: string, origin?: string | null) {
   const res = await fetch(`${BASE}/upload/v1beta/files`, {
     method: "POST",
     headers: {
+      // Google's resumable uploads allow CORS for the origin that started the session,
+      // so pass the browser's origin through.
+      ...(origin ? { Origin: origin } : {}),
       "x-goog-api-key": key(),
       "X-Goog-Upload-Protocol": "resumable",
       "X-Goog-Upload-Command": "start",
@@ -83,10 +86,25 @@ export async function analyseMoveInVideo(fileName: string): Promise<MoveInAnalys
     },
   });
 
-  const text = res.text;
-  if (!text) throw new Error("Gemini returned an empty answer.");
-  const parsed = JSON.parse(text) as MoveInAnalysis;
+  const parsed = parseJson<MoveInAnalysis>(res.text);
   // Uploaded files are deleted automatically after 48 hours; delete now for privacy.
   ai.files.delete({ name: fileName }).catch(() => {});
   return parsed;
+}
+
+function parseJson<T>(text: string | undefined): T {
+  if (!text) throw new Error("Gemini returned an empty answer.");
+  // Some models wrap JSON in a code fence even in JSON mode.
+  return JSON.parse(text.replace(/^```(?:json)?\s*|\s*```$/g, "")) as T;
+}
+
+/** One structured call: some inline parts (images, PDFs) plus a prompt, JSON out. */
+export async function generateJson<T>(parts: Part[], prompt: string, schema: object, temperature = 0.1): Promise<T> {
+  const ai = new GoogleGenAI({ apiKey: key() });
+  const res = await ai.models.generateContent({
+    model: GEMINI_MODEL,
+    contents: [{ role: "user", parts: [...parts, { text: prompt }] }],
+    config: { responseMimeType: "application/json", responseJsonSchema: schema, temperature },
+  });
+  return parseJson<T>(res.text);
 }
