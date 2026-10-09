@@ -2,7 +2,8 @@ import { generateJson, hasGeminiKey } from "@/lib/ai/gemini";
 import { TRANSLATE_SCHEMA, translatePrompt } from "@/lib/ai/prompts";
 import { LANGUAGES } from "@/lib/content/languages";
 
-export const maxDuration = 60;
+// Room for falling back to other models when Gemini is overloaded.
+export const maxDuration = 300;
 
 // POST { language: "hi", texts: string[] } -> { translations: string[] }
 // Only the plain-language explanation is translated. The letter always stays in English.

@@ -4,7 +4,8 @@ import { EVIDENCE_PROMPT, EVIDENCE_SCHEMA } from "@/lib/ai/prompts";
 import { demoExtraction } from "@/lib/evidence/demo";
 import type { EvidenceExtraction } from "@/lib/evidence/types";
 
-export const maxDuration = 60;
+// Room for falling back to other models when Gemini is overloaded.
+export const maxDuration = 300;
 
 const ALLOWED = /^(image\/(png|jpeg|webp|heic|heif)|application\/pdf|text\/plain)$/;
 // Vercel caps request bodies at about 4.5 MB; the browser shrinks images before sending.

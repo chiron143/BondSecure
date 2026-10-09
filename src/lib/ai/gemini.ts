@@ -18,7 +18,8 @@ import { MOVE_IN_PROMPT, MOVE_IN_SCHEMA } from "./prompts";
 
 export const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
 // If the main model is overloaded (503) or rate-limited (429), try these in order.
-const FALLBACK_MODELS = (process.env.GEMINI_FALLBACK_MODELS || "gemini-3.7-flash,gemini-3.5-flash")
+// (gemini-3.7-flash currently serves 3.8 under the hood, so it's no use as a fallback.)
+const FALLBACK_MODELS = (process.env.GEMINI_FALLBACK_MODELS || "gemini-3.6-flash,gemini-3.5-flash")
   .split(",")
   .map((m) => m.trim())
   .filter(Boolean);
@@ -30,14 +31,15 @@ const busy = (e: unknown) => {
 };
 
 /**
- * Runs a Gemini call with a short retry, then falls back to other Flash models when
- * Google is overloaded. Other errors (bad request, bad key) fail straight away.
+ * Runs a Gemini call, moving straight on to the next Flash model when Google says it's
+ * overloaded (a busy model rarely recovers within seconds, and serverless time is
+ * limited). One last short retry on the final model. Other errors fail straight away.
  */
 export async function withModelFallback<T>(call: (model: string) => Promise<T>): Promise<T> {
   const models = [GEMINI_MODEL, ...FALLBACK_MODELS.filter((m) => m !== GEMINI_MODEL)];
   let last: unknown;
-  for (const model of models) {
-    for (const wait of [0, 2500]) {
+  for (const [n, model] of models.entries()) {
+    for (const wait of n === models.length - 1 ? [0, 3000] : [0]) {
       if (wait) await new Promise((r) => setTimeout(r, wait));
       try {
         return await call(model);
