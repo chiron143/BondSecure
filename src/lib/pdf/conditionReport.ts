@@ -2,6 +2,7 @@ import { formatDate } from "../rules/dates";
 import { formatTimestamp } from "../movein/format";
 import type { Condition, MoveInReport } from "../movein/types";
 import { ACCENT, Doc, MUTED, WARN } from "./layout";
+import { attachReportData } from "./reportData";
 
 export const CONDITION_LABEL: Record<Condition, string> = {
   good: "Good",
@@ -74,5 +75,7 @@ export async function buildConditionReportPdf(r: MoveInReport): Promise<Uint8Arr
   );
   doc.text("Signed: ______________________________      Date: ________________", { gap: 10 });
   doc.text("Prepared with Bond Secure. Legal information, not legal advice.", { size: 8.5, color: MUTED });
+  doc.text("Keep this PDF. If your bond isn't returned, upload it to Bond Secure and your evidence goes straight into your claim.", { size: 8.5, color: MUTED });
+  await attachReportData(doc.pdf, r);
   return doc.save();
 }

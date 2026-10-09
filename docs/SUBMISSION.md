@@ -8,6 +8,8 @@ Submit at https://www.productcounsel.com.au/builders-hack (one form: website URL
 - [ ] Paste the Gemini key into `.env.local`, then test the live video path locally (SPEC Step 1)
 - [ ] Optional: register for a free ABN Lookup GUID (https://abr.business.gov.au/Tools/WebServicesAgreement), put it in `.env.local` and Vercel as `ABR_GUID`. Without it the app links to the public ABN search instead
 - [ ] Import `chiron143/BondSecure` into Vercel, add `GEMINI_API_KEY` in project settings, deploy (SPEC Step 2)
+- [ ] Turn on billing for the Gemini key (AI Studio → the key's project → Set up billing), then add `GEMINI_PAID_TIER=true` in Vercel and redeploy. Only then does the site say Google doesn't train on uploads
+- [ ] Add real tester quotes (with permission, word for word) to `src/lib/content/voices.ts`; the homepage shows them automatically
 - [ ] Film a real 2-minute narrated video of your room (point at 3–4 real marks, say them out loud)
 - [ ] Run it on the deployed URL from your phone; check the stills show the items listed
 - [ ] Hand-over test: 2–3 neighbours try it cold on their phones (script below). Fill deck page 3 brackets

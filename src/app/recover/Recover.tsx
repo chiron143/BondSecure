@@ -14,6 +14,7 @@ import type { Agreement, CaseFacts, Residents, Who, YesNoUnsure } from "@/lib/ru
 import { useStore } from "@/lib/store";
 import AbnFinder from "./AbnFinder";
 import EvidenceReader from "./EvidenceReader";
+import MoveInUpload from "./MoveInUpload";
 
 type Opt<T extends string> = { v: T; label: string; hint?: string };
 
@@ -212,16 +213,17 @@ export default function Recover() {
           {store.moveIn && !moveInFitsCase(store.moveIn, facts as CaseFacts) ? (
             <p className="mt-2 rounded-xl bg-warn-soft p-3 text-sm text-warn">
               Your saved move-in report is dated {formatDate(store.moveIn.moveInDate)}, after you moved out, so it can&apos;t be
-              evidence for this room and isn&apos;t included. Use your own move-in photos instead.
+              evidence for this room and isn&apos;t included. Upload the right report below, or use your own move-in photos.
             </p>
           ) : store.moveIn ? (
             <p className="mt-2 text-sm">
               ✓ Your move-in report from {formatDate(store.moveIn.moveInDate)} ({store.moveIn.items.filter((i) => i.status === "confirmed" && i.condition !== "good").length} existing problems) goes into your claim pack.
             </p>
           ) : (
-            <p className="mt-2 text-sm text-muted">No move-in report yet. Use your own move-in and move-out photos, and next time <Link className="underline" href="/move-in">record your room on day one</Link>.</p>
+            <p className="mt-2 text-sm text-muted">No move-in report loaded. Use your own move-in and move-out photos, or upload the report below. Next time, <Link className="underline" href="/move-in">record your room on day one</Link>.</p>
           )}
         </div>
+        {(!store.moveIn || !moveInFitsCase(store.moveIn, facts as CaseFacts)) && <MoveInUpload />}
 
         <div className="mt-6 flex flex-wrap gap-3">
           <button
@@ -260,6 +262,12 @@ export default function Recover() {
           setFacts((x) => ({ ...x, ...found }));
           setParties((x) => ({ ...x, ...who }));
         }}
+      />
+
+      <MoveInUpload
+        onLoaded={(r) =>
+          setParties((x) => ({ ...x, propertyAddress: x.propertyAddress || r.propertyAddress, studentName: x.studentName || r.tenantName }))
+        }
       />
 
       <div className="card mt-6 space-y-7">

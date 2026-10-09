@@ -7,6 +7,7 @@ import { buildVerdict } from "../rules/engine";
 import type { CaseFacts } from "../rules/types";
 import { buildClaimPackPdf } from "./claimPack";
 import { buildConditionReportPdf } from "./conditionReport";
+import { readReportData } from "./reportData";
 
 // 1x1 grey JPEG, stands in for a video frame.
 const FRAME =
@@ -59,6 +60,11 @@ describe("PDFs", () => {
     const pack = await buildClaimPackPdf({ facts, verdict, parties, letter, moveIn, today: "2026-10-09" });
     expect(report.length).toBeGreaterThan(1000);
     expect(pack.length).toBeGreaterThan(1000);
+
+    // The move-in PDF carries its data, so it can be uploaded again months later.
+    expect(await readReportData(report)).toEqual(moveIn);
+    expect(await readReportData(pack)).toBeNull();
+    expect(await readReportData(new TextEncoder().encode("not a pdf"))).toBeNull();
 
     const out = process.env.PDF_OUT;
     if (out) {

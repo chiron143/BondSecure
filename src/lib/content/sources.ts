@@ -90,6 +90,14 @@ export const SOURCES: Source[] = [
     url: "https://www.unsw.edu.au/news/2019/07/international-students-at-risk-of-exploitation-by-sydney-landlor",
     checked: "2026-10-09",
   },
+  {
+    id: "research-housing",
+    rule:
+      "In a survey of more than 5,000 international students, share housing was the most common first home (36%), and 57% of students in share housing experienced illegal or poor living conditions in their first share house.",
+    source: "UNSW / UTS, Living Precariously: Understanding International Students' Housing Experiences in Australia (Berg & Farbenblum, 2019)",
+    url: "https://www.unsw.edu.au/newsroom/news/2019/12/international-students-exploited-by-landlords",
+    checked: "2026-10-10",
+  },
 ];
 
 export const HELP_CONTACTS = [

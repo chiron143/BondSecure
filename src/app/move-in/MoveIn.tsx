@@ -155,7 +155,10 @@ export default function MoveIn() {
           <div>
             <label className="label" htmlFor="video">Your walk-through video</label>
             <input id="video" type="file" accept="video/*" className="field" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-            <p className="mt-1.5 text-xs text-muted">Film it now or pick a video you already took. MP4 or MOV.</p>
+            <p className="mt-1.5 text-xs text-muted">
+              Film it now or pick a video you already took. MP4 or MOV. Google&apos;s Gemini AI analyses it and we delete it
+              straight after. <Link className="underline" href="/privacy">How your data is handled</Link>
+            </p>
           </div>
           {error && (
             <div className="rounded-xl bg-warn-soft p-4 text-sm text-warn">

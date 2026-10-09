@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import type { Parties } from "@/lib/content/letters";
 import { applyFindings } from "@/lib/evidence/apply";
@@ -67,8 +68,8 @@ export default function EvidenceReader({
       <p className="font-semibold">Have receipts, emails or your agreement? Let AI fill this in.</p>
       <p className="mt-1 text-sm text-muted">
         Add screenshots or photos of your payment receipt, your agreement or terms, and their emails. We&apos;ll read the
-        amounts, dates and names, show you exactly where we found each one, and you choose what to use. Your files aren&apos;t
-        stored.
+        amounts, dates and names, show you exactly where we found each one, and you choose what to use. We don&apos;t keep your
+        files. <Link className="underline" href="/privacy">How your data is handled</Link>
       </p>
       <input
         type="file"

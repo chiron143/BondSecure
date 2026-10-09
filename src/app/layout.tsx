@@ -6,7 +6,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Bond Secure: get your full bond back",
   description:
-    "Film your room on move-in day and get a proper condition report. If your bond or deposit isn't returned, get the right legal steps and a claim pack. For renters in NSW.",
+    "Film your room on move-in day and get a proper condition report. If your bond or deposit isn't returned, get the right legal steps and a claim pack. For international students renting in NSW.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -32,7 +32,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <main className="flex-1">{children}</main>
           <footer className="mx-auto w-full max-w-5xl px-4 py-10 text-xs text-muted sm:px-6">
             Legal information for NSW renters, not legal advice. Bond Secure doesn&apos;t file anything for you and doesn&apos;t
-            store your documents. <Link href="/sources" className="underline">Where our rules come from</Link>.
+            keep your documents. <Link href="/privacy" className="underline">How your data is handled</Link> ·{" "}
+            <Link href="/sources" className="underline">Where our rules come from</Link>.
           </footer>
         </StoreProvider>
       </body>
