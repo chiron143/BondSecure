@@ -12,7 +12,7 @@ import "server-only";
 // If step 2 is blocked by CORS in the browser, fall back to Vercel Blob client uploads
 // and have the server stream the blob into Gemini (see SPEC.md, "Fallbacks").
 
-import { GoogleGenAI, MediaResolution, createPartFromUri, type Part } from "@google/genai";
+import { GoogleGenAI, MediaResolution, ThinkingLevel, createPartFromUri, type Part } from "@google/genai";
 import type { MoveInAnalysis } from "../movein/types";
 import { MOVE_IN_PROMPT, MOVE_IN_SCHEMA } from "./prompts";
 
@@ -23,6 +23,10 @@ const FALLBACK_MODELS = (process.env.GEMINI_FALLBACK_MODELS || "gemini-3.6-flash
   .split(",")
   .map((m) => m.trim())
   .filter(Boolean);
+
+// Reading receipts and translating are simple; the quickest model does them well. Video
+// gets the strongest model first, because small marks matter there.
+export const FAST_MODEL = process.env.GEMINI_FAST_MODEL || "gemini-3.5-flash";
 
 const busy = (e: unknown) => {
   const status = (e as { status?: number }).status;
@@ -35,8 +39,8 @@ const busy = (e: unknown) => {
  * overloaded (a busy model rarely recovers within seconds, and serverless time is
  * limited). One last short retry on the final model. Other errors fail straight away.
  */
-export async function withModelFallback<T>(call: (model: string) => Promise<T>): Promise<T> {
-  const models = [GEMINI_MODEL, ...FALLBACK_MODELS.filter((m) => m !== GEMINI_MODEL)];
+export async function withModelFallback<T>(call: (model: string) => Promise<T>, first = GEMINI_MODEL): Promise<T> {
+  const models = [...new Set([first, ...FALLBACK_MODELS, GEMINI_MODEL])];
   let last: unknown;
   for (const [n, model] of models.entries()) {
     for (const wait of n === models.length - 1 ? [0, 3000] : [0]) {
@@ -146,13 +150,15 @@ function parseJson<T>(text: string | undefined): T {
 
 /** One structured call: some inline parts (images, PDFs) plus a prompt, JSON out. */
 export async function generateJson<T>(parts: Part[], prompt: string, schema: object, temperature = 0.1): Promise<T> {
+  // Documents and translation: start with the fast model, fall back to the others.
   const ai = new GoogleGenAI({ apiKey: key() });
   return withModelFallback(async (model) => {
     const res = await ai.models.generateContent({
       model,
       contents: [{ role: "user", parts: [...parts, { text: prompt }] }],
-      config: { responseMimeType: "application/json", responseJsonSchema: schema, temperature },
+      // Reading a receipt or translating needs little reasoning; low thinking is much faster.
+      config: { responseMimeType: "application/json", responseJsonSchema: schema, temperature, thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } },
     });
     return parseJson<T>(res.text);
-  });
+  }, FAST_MODEL);
 }
