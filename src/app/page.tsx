@@ -7,13 +7,14 @@ import {
   Film,
   Globe,
   Landmark,
+  ListChecks,
   Scale,
+  Send,
   ShieldCheck,
   Upload,
 } from "lucide-react";
 import Link from "next/link";
 import CopyButton from "@/components/CopyButton";
-import Stepper from "@/components/Stepper";
 import { aiPrivacyLine, isPaidTier } from "@/lib/content/privacy";
 import { SOURCES } from "@/lib/content/sources";
 import { VOICES } from "@/lib/content/voices";
@@ -47,19 +48,19 @@ export default function Home() {
             <Globe className="h-3.5 w-3.5" aria-hidden /> For international students renting in NSW
           </p>
           <h1 className="mt-5 max-w-3xl font-display text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl">
-            Your bond is your money. Keep the proof, and get it back.
+            Bond not back? Find out which law they&apos;ve broken, and demand it back today.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-navy-muted">
-            New to renting in Sydney? Film your room on move-in day and get a proper condition report. If your bond
-            doesn&apos;t come back, find out which NSW rules apply, how late they are, and get the letter to send, explained in
-            your language.
+            Answer a few plain questions, or drop in your receipt and their emails. Tested NSW rules tell you which law applies
+            and exactly how many days late they are. You get a formal demand letter and a claim pack with your evidence,
+            explained in your language.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="/move-in" className="btn-primary bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
-              <Upload className="h-5 w-5" aria-hidden /> I&apos;m moving in
+            <Link href="/recover" className="btn-primary bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
+              Get my bond back <ArrowRight className="h-5 w-5" aria-hidden />
             </Link>
-            <Link href="/recover" className="btn border border-navy-line bg-white/5 text-white hover:bg-white/10">
-              I didn&apos;t get my bond back <ArrowRight className="h-5 w-5" aria-hidden />
+            <Link href="/move-in" className="btn border border-navy-line bg-white/5 text-white hover:bg-white/10">
+              <Upload className="h-5 w-5" aria-hidden /> Moving in? Protect your bond first
             </Link>
           </div>
 
@@ -82,9 +83,26 @@ export default function Home() {
       </section>
 
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        {/* Steps */}
+        {/* Steps: the headline job */}
         <section className="-mt-6 rounded-2xl border border-line bg-card p-3 shadow-sm sm:p-4">
-          <Stepper />
+          <ol className="grid gap-3 sm:grid-cols-3">
+            {[
+              { Icon: ListChecks, t: "Answer a few questions", d: "Or let AI read your receipt and emails. You confirm every answer." },
+              { Icon: Scale, t: "See where you stand", d: "Which law, the legal deadline and how late they are, with sources." },
+              { Icon: Send, t: "Send the demand", d: "A formal letter, a claim pack and an NCAT kit if they still don't pay." },
+            ].map(({ Icon, t, d }, i) => (
+              <li key={t} className="flex items-center gap-3 rounded-xl border border-line p-3">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent text-accent-ink">
+                  <Icon className="h-5 w-5" aria-hidden />
+                </span>
+                <span>
+                  <span className="block text-xs font-semibold uppercase tracking-wider text-accent">Step {i + 1}</span>
+                  <span className="block font-semibold leading-tight">{t}</span>
+                  <span className="block text-sm text-muted">{d}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
         </section>
 
         {/* Workspace example */}
@@ -95,37 +113,10 @@ export default function Home() {
           </div>
 
           <div className="mt-5 grid gap-4 lg:grid-cols-2">
-            {/* Left: move-in evidence */}
-            <div className="card">
-              <p className="flex items-center gap-2 text-sm font-semibold text-muted">
-                <Film className="h-4 w-4" aria-hidden /> Move-in day · AI inspection of your video
-              </p>
-              <ol className="mt-4 space-y-3">
-                {EXAMPLE_FINDINGS.map((f) => (
-                  <li key={f.t} className="flex gap-3">
-                    <div className="relative grid h-16 w-24 shrink-0 place-items-center overflow-hidden rounded-lg bg-gradient-to-br from-slate-300 to-slate-500 text-white dark:from-slate-700 dark:to-slate-900">
-                      <Film className="h-5 w-5 opacity-70" aria-hidden />
-                      <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1 font-mono text-[10px]">{f.t}</span>
-                    </div>
-                    <div className="min-w-0 text-sm">
-                      <p className="font-semibold">
-                        <span className="font-mono text-accent">{f.t}</span> · {f.room}: {f.item}
-                      </p>
-                      <p className="text-muted">{f.note}</p>
-                      <span className="mt-1 inline-block rounded-full bg-warn-soft px-2 py-0.5 text-xs font-semibold text-warn">{f.tag}</span>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-              <p className="mt-4 text-xs text-muted">
-                Each still is taken from your own video at that second. You confirm every line before the PDF is made.
-              </p>
-            </div>
-
-            {/* Right: legal status and claim pack */}
+            {/* First: the legal position, the headline job */}
             <div className="card flex flex-col">
               <p className="flex items-center gap-2 text-sm font-semibold text-muted">
-                <Landmark className="h-4 w-4" aria-hidden /> Months later · your legal position
+                <Landmark className="h-4 w-4" aria-hidden /> Your legal position
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <span className="inline-flex items-center gap-1.5 rounded-lg bg-warn px-3 py-1.5 text-sm font-bold text-white dark:text-slate-950">
@@ -157,7 +148,50 @@ export default function Home() {
                 <Download className="h-5 w-5" aria-hidden /> Make my own claim pack
               </Link>
             </div>
+            {/* Second: move-in evidence makes the claim stronger */}
+            <div className="card">
+              <p className="flex items-center gap-2 text-sm font-semibold text-muted">
+                <Film className="h-4 w-4" aria-hidden /> Even stronger: proof from move-in day
+              </p>
+              <ol className="mt-4 space-y-3">
+                {EXAMPLE_FINDINGS.map((f) => (
+                  <li key={f.t} className="flex gap-3">
+                    <div className="relative grid h-16 w-24 shrink-0 place-items-center overflow-hidden rounded-lg bg-gradient-to-br from-slate-300 to-slate-500 text-white dark:from-slate-700 dark:to-slate-900">
+                      <Film className="h-5 w-5 opacity-70" aria-hidden />
+                      <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1 font-mono text-[10px]">{f.t}</span>
+                    </div>
+                    <div className="min-w-0 text-sm">
+                      <p className="font-semibold">
+                        <span className="font-mono text-accent">{f.t}</span> · {f.room}: {f.item}
+                      </p>
+                      <p className="text-muted">{f.note}</p>
+                      <span className="mt-1 inline-block rounded-full bg-warn-soft px-2 py-0.5 text-xs font-semibold text-warn">{f.tag}</span>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-4 text-xs text-muted">
+                Each still is taken from your own video at that second. You confirm every line before the PDF is made.
+              </p>
+            </div>
+
           </div>
+        </section>
+
+        {/* Follow-on: protect the next room */}
+        <section className="mb-12 grid gap-6 rounded-2xl bg-navy p-6 text-navy-ink sm:p-8 md:grid-cols-[1.4fr_1fr] md:items-center">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-emerald-400">Moving into a new room?</p>
+            <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">Make sure this never happens again.</h2>
+            <p className="mt-3 text-navy-muted">
+              Film a 2-minute walk-through on day one and say what you see. AI lists every mark with the second it appears and a
+              still from your video. Keep the PDF: if your bond isn&apos;t returned, upload it here and it goes straight into your
+              claim.
+            </p>
+          </div>
+          <Link href="/move-in" className="btn-primary bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
+            <Film className="h-5 w-5" aria-hidden /> Record my move-in report
+          </Link>
         </section>
 
         {/* Evidence of the problem */}
@@ -219,7 +253,8 @@ export default function Home() {
             <p className="mt-2 text-[15px] text-muted">
               Legal information, not legal advice. Which law applies and every deadline are worked out by tested rules, not
               AI, and each rule links to its official source. When your situation is unclear, we tell you to call a free
-              legal service instead of guessing.
+              legal service instead of guessing. <Link href="/how-it-decides" className="underline">See how it decides</Link>, including
+              the tricky cases.
             </p>
           </div>
         </section>

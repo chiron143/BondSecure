@@ -220,10 +220,15 @@ function buildVerdictInner(f: CaseFacts, today: string): Verdict {
       const late = overdue(due);
       return {
         ...base,
+        // Only state the deadline as fact when we're confident it's a boarding house.
         title:
-          late > 0
-            ? `Your deposit was due back on ${formatDate(due)}. They're ${late} day${late === 1 ? "" : "s"} late.`
-            : `Your deposit is due back by ${formatDate(due)}.`,
+          confidence === "possible"
+            ? late > 0
+              ? `If this is a boarding house, your deposit was due back on ${formatDate(due)}, ${late} day${late === 1 ? "" : "s"} ago.`
+              : `If this is a boarding house, your deposit is due back by ${formatDate(due)}.`
+            : late > 0
+              ? `Your deposit was due back on ${formatDate(due)}. They're ${late} day${late === 1 ? "" : "s"} late.`
+              : `Your deposit is due back by ${formatDate(due)}.`,
         lawName: "Boarding Houses Act 2012 (NSW)",
         summary:
           `This looks like a boarding house. The operator had to refund your ${money(owed)} deposit within 14 days of you moving out, minus only allowed deductions like unpaid rent or reasonable repair costs. Send a formal demand, and if they don't pay, apply to NCAT.`,

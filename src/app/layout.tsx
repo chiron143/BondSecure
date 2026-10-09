@@ -24,8 +24,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 Bond Secure
               </Link>
               <nav className="flex gap-4 text-sm font-medium text-navy-muted">
+                <Link href="/recover" className="hover:text-white">Get my bond back</Link>
                 <Link href="/move-in" className="hover:text-white">Moving in</Link>
-                <Link href="/recover" className="hover:text-white">Bond not back</Link>
               </nav>
             </header>
           </div>
@@ -33,6 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <footer className="mx-auto w-full max-w-5xl px-4 py-10 text-xs text-muted sm:px-6">
             Legal information for NSW renters, not legal advice. Bond Secure doesn&apos;t file anything for you and doesn&apos;t
             keep your documents. <Link href="/privacy" className="underline">How your data is handled</Link> ·{" "}
+            <Link href="/how-it-decides" className="underline">How it decides</Link> ·{" "}
             <Link href="/sources" className="underline">Where our rules come from</Link>.
           </footer>
         </StoreProvider>

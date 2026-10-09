@@ -12,10 +12,13 @@ import { buildClaimPackPdf } from "@/lib/pdf/claimPack";
 import { downloadPdf } from "@/lib/pdf/layout";
 import { addDays, formatDate, todayIso } from "@/lib/rules/dates";
 import { buildVerdict } from "@/lib/rules/engine";
+import { EXAMPLE_CASES, EXAMPLE_PARTIES } from "@/lib/rules/examples";
+import { PATH_LABEL, explain } from "@/lib/rules/explain";
 import type { Agreement, CaseFacts, Residents, Who, YesNoUnsure } from "@/lib/rules/types";
 import { useStore } from "@/lib/store";
 import AbnFinder from "./AbnFinder";
 import EvidenceReader from "./EvidenceReader";
+import HowWeDecided from "./HowWeDecided";
 import MoveInUpload from "./MoveInUpload";
 
 type Opt<T extends string> = { v: T; label: string; hint?: string };
@@ -60,28 +63,6 @@ function Choice<T extends string>({ name, opts, value, onChange }: { name: strin
   );
 }
 
-const EXAMPLE: { facts: CaseFacts; parties: Parties } = {
-  facts: {
-    state: "NSW",
-    who: "operator",
-    agreement: "occupancy_agreement",
-    residents: "5_or_more",
-    bondLodged: "no",
-    amountPaid: 802,
-    weeklyRent: 401,
-    datePaid: "2026-02-02",
-    moveOutDate: addDays(todayIso(), -50),
-    agreementRefundDays: 15,
-    reasonGiven: "It's still being processed",
-  },
-  parties: {
-    studentName: "Priya Sharma",
-    studentEmail: "priya@example.com",
-    propertyAddress: "Room 12, 100 Example Street, Surry Hills NSW 2010",
-    landlordName: "Sample Rooms",
-  },
-};
-
 export default function Recover() {
   const store = useStore();
   const [facts, setFacts] = useState<Partial<CaseFacts>>(store.facts ?? { state: "NSW" });
@@ -112,9 +93,12 @@ export default function Recover() {
   if (result) {
     const { verdict: v, letter } = result;
     // Everything a student reads to understand their situation, but never the letter.
+    const ex = explain(facts as CaseFacts);
     const explanation = [
       v.title, v.summary, ...v.because, ...v.flags, ...v.nextSteps, ...v.getHelpIf,
       ...v.deadlines.flatMap((d) => [d.label, d.note ?? ""]),
+      PATH_LABEL[v.path], ...ex.whatIfs.flatMap((w) => [w.condition, PATH_LABEL[w.path]]),
+      "This depends on something you weren't sure about:", "Check with a free legal service before you send anything.",
     ].filter(Boolean);
     const map = translated[lang];
     const t = (s: string) => map?.get(s) ?? s;
@@ -166,11 +150,17 @@ export default function Recover() {
           {(() => {
             // The legal deadline comes first in the list; show how late they are, loudly.
             const late = v.deadlines.find((d) => (d.daysOverdue ?? 0) > 0);
-            return late ? (
+            if (!late) return null;
+            // When the path itself is uncertain, so is the deadline: say so in the badge.
+            return ex.checkWithAService ? (
+              <span className="inline-flex items-center gap-1.5 rounded-lg bg-warn-soft px-3 py-1.5 text-sm font-bold text-warn">
+                <AlertTriangle className="h-4 w-4" aria-hidden /> Possibly {late.daysOverdue} days overdue
+              </span>
+            ) : (
               <span className="inline-flex items-center gap-1.5 rounded-lg bg-warn px-3 py-1.5 text-sm font-bold text-white dark:text-slate-950">
                 <AlertTriangle className="h-4 w-4" aria-hidden /> {late.daysOverdue} days overdue
               </span>
-            ) : null;
+            );
           })()}
           <p className="text-sm font-semibold uppercase tracking-wider text-accent">{v.lawName ?? "Your situation"} · {v.confidence}</p>
         </div>
@@ -180,11 +170,9 @@ export default function Recover() {
           {v.amountOwed.toLocaleString("en-AU", { style: "currency", currency: "AUD" })} <span className="text-base font-normal text-muted">owed to you</span>
         </p>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          <div className="card">
-            <h2 className="font-semibold">Why we think this</h2>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted">{v.because.map((b) => <li key={b}>{t(b)}</li>)}</ul>
-          </div>
+        <HowWeDecided v={v} ex={ex} t={t} />
+
+        <div className="mt-4">
           <div className="card">
             <h2 className="font-semibold">Deadlines</h2>
             <ul className="mt-2 space-y-2 text-sm">
@@ -269,9 +257,28 @@ export default function Recover() {
       <div className="mb-6"><Stepper current={3} compact /></div>
       <h1 className="font-display tracking-tight text-3xl font-semibold">Didn&apos;t get your bond back?</h1>
       <p className="mt-3 text-muted">A few questions to work out which rules apply to you. Answer &quot;not sure&quot; whenever you&apos;re not sure.</p>
-      <button className="mt-3 text-sm underline" onClick={() => { setFacts(EXAMPLE.facts); setParties(EXAMPLE.parties); }}>
-        Fill in an example case
-      </button>
+      <details className="mt-3 text-sm">
+        <summary className="cursor-pointer underline">Try an example case, including tricky ones</summary>
+        <div className="mt-2 grid gap-2">
+          {EXAMPLE_CASES.map((c) => (
+            <button
+              key={c.id}
+              className="rounded-xl border border-line bg-card p-3 text-left hover:border-accent"
+              onClick={() => {
+                setFacts({ ...c.facts, moveOutDate: addDays(todayIso(), -50) });
+                setParties(EXAMPLE_PARTIES);
+                setShowVerdict(true);
+              }}
+            >
+              <span className={`mr-2 rounded-full px-2 py-0.5 text-xs font-semibold ${c.kind === "typical" ? "bg-accent-soft text-accent" : "bg-warn-soft text-warn"}`}>
+                {c.kind}
+              </span>
+              <span className="font-medium">{c.label}</span>
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-muted">Examples use sample names. &quot;Sample Rooms&quot; is not a real operator.</p>
+      </details>
 
       <EvidenceReader
         onApply={(found, who) => {

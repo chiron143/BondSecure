@@ -71,6 +71,11 @@ describe("buildVerdict", () => {
     expect(v.amountOwed).toBe(802);
     expect(v.title).toContain("36 days late");
   });
+  it("boarding house we're unsure about: the deadline is conditional, not stated as fact", () => {
+    const v = buildVerdict({ ...base, residents: "not_sure" }, "2026-10-09");
+    expect(v.confidence).toBe("possible");
+    expect(v.title).toBe("If this is a boarding house, your deposit was due back on 3 September 2026, 36 days ago.");
+  });
   it("boarding house: flags deposit above 2 weeks' fee", () => {
     const v = buildVerdict({ ...base, weeklyRent: 300 }, "2026-10-09");
     expect(v.flags.some((f) => f.includes("more than 2 weeks"))).toBe(true);
