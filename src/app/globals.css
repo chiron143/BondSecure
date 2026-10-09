@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+/* Bond Secure palette: paper, ink and a deep "receipt" green that reads as trustworthy. */
+:root {
+  --paper: #f7f5ef;
+  --card: #ffffff;
+  --ink: #1c2126;
+  --muted: #5d6670;
+  --line: #e3dfd4;
+  --accent: #0f6654;
+  --accent-ink: #ffffff;
+  --accent-soft: #e3f0ec;
+  --warn: #b0401a;
+  --warn-soft: #fbece5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #14171a;
+    --card: #1c2024;
+    --ink: #e8e6e0;
+    --muted: #9aa3ab;
+    --line: #2e343a;
+    --accent: #5cc4a8;
+    --accent-ink: #0b1a16;
+    --accent-soft: #173029;
+    --warn: #f08a62;
+    --warn-soft: #34201a;
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-[15px] font-semibold transition disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-accent text-accent-ink hover:opacity-90;
+}
+@utility btn-ghost {
+  @apply btn border border-line bg-card text-ink hover:border-accent;
+}
+@utility field {
+  @apply w-full rounded-xl border border-line bg-card px-4 py-3 text-[15px] outline-none focus:border-accent;
+}
+@utility label {
+  @apply mb-1.5 block text-sm font-semibold;
+}
+@utility card {
+  @apply rounded-2xl border border-line bg-card p-5 sm:p-6;
+}
