@@ -40,6 +40,7 @@ export interface MoveInReport {
     sizeBytes: number;
     durationSec: number;
     lastModified: string; // ISO datetime from the file, a hint for when it was filmed
+    recordedAt?: string; // ISO datetime the camera wrote into the MP4/MOV itself, if present
     sha256: string; // fingerprint of the exact video file, so it can't be swapped later
   };
   items: ReportItem[];

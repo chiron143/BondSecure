@@ -39,7 +39,7 @@ const moveIn: MoveInReport = {
   propertyAddress: parties.propertyAddress,
   tenantName: "Priya Sharma 普丽雅", // non-Latin characters must not crash the PDF
   moveInDate: "2026-02-03",
-  video: { name: "room.mp4", sizeBytes: 1, durationSec: 120, lastModified: "2026-02-03T10:00:00Z", sha256: "a".repeat(64) },
+  video: { name: "room.mp4", sizeBytes: 1, durationSec: 120, lastModified: "2026-02-03T10:00:00Z", recordedAt: "2026-02-03T09:55:00Z", sha256: "a".repeat(64) },
   items: analysis.rooms.flatMap((r) =>
     r.items.map((i, n) => ({ ...i, room: r.room, id: `${r.room}-${n}`, frame: FRAME, status: "confirmed" as const })),
   ),

@@ -27,7 +27,14 @@ export async function buildConditionReportPdf(r: MoveInReport): Promise<Uint8Arr
   doc.text(`Tenant: ${r.tenantName}`, { gap: 1 });
   doc.text(`Move-in date: ${formatDate(r.moveInDate)}`, { gap: 1 });
   doc.text(`Report created: ${new Date(r.createdAt).toLocaleString("en-AU", { timeZone: "Australia/Sydney" })} (Sydney time)`, { gap: 1 });
-  doc.text(`Video: ${r.video.name}, ${formatTimestamp(r.video.durationSec)} long, file last modified ${new Date(r.video.lastModified).toLocaleString("en-AU", { timeZone: "Australia/Sydney" })}`, { gap: 1 });
+  const sydney = (iso: string) => new Date(iso).toLocaleString("en-AU", { timeZone: "Australia/Sydney" });
+  doc.text(
+    `Video: ${r.video.name}, ${formatTimestamp(r.video.durationSec)} long, ` +
+      (r.video.recordedAt
+        ? `recorded ${sydney(r.video.recordedAt)} Sydney time (from the video's own metadata)`
+        : `file last modified ${sydney(r.video.lastModified)}`),
+    { gap: 1 },
+  );
   doc.text(`Video fingerprint (SHA-256): ${r.video.sha256}`, { size: 8.5, color: MUTED, gap: 8 });
 
   doc.box([

@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { todayIso } from "@/lib/rules/dates";
 import { demoAnalysis } from "@/lib/movein/demo";
 import { grabFrame, loadVideo, sha256 } from "@/lib/movein/browser";
+import { fileReader, readRecordedAt } from "@/lib/movein/mp4";
 import { formatTimestamp } from "@/lib/movein/format";
 import type { Condition, MoveInAnalysis, MoveInReport, ReportItem } from "@/lib/movein/types";
 import { CONDITION_LABEL, buildConditionReportPdf } from "@/lib/pdf/conditionReport";
@@ -68,6 +69,7 @@ export default function MoveIn() {
       videoRef.current = video;
       setStatus("Fingerprinting the video file…");
       const hash = await sha256(file);
+      const recordedAt = await readRecordedAt(fileReader(file), file.size);
 
       const wantDemo = forceDemo || new URLSearchParams(window.location.search).has("demo");
       let analysis: MoveInAnalysis;
@@ -97,6 +99,7 @@ export default function MoveIn() {
           sizeBytes: file.size,
           durationSec: video.duration,
           lastModified: new Date(file.lastModified).toISOString(),
+          recordedAt,
           sha256: hash,
         },
         items,
