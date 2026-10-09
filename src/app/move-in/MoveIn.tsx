@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { FileDown, Loader2, ScanSearch } from "lucide-react";
+import Stepper from "@/components/Stepper";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { todayIso } from "@/lib/rules/dates";
 import { demoAnalysis } from "@/lib/movein/demo";
@@ -131,7 +133,8 @@ export default function MoveIn() {
     const ready = file && address.trim() && name.trim() && moveInDate;
     return (
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-        <h1 className="font-serif text-3xl font-semibold">Record your room on move-in day</h1>
+        <div className="mb-6"><Stepper current={1} compact /></div>
+        <h1 className="font-display tracking-tight text-3xl font-semibold">Record your room on move-in day</h1>
         <p className="mt-3 text-muted">
           Walk through slowly. Get close to anything already damaged, dirty or broken, and say what you see out loud. Turn the
           lights on. Two minutes per room is plenty.
@@ -167,7 +170,7 @@ export default function MoveIn() {
             </div>
           )}
           <button className="btn-primary w-full" disabled={!ready || step === "working"} onClick={() => run()}>
-            {step === "working" ? status : "Make my move-in report"}
+            {step === "working" ? <><Loader2 className="h-5 w-5 animate-spin" aria-hidden /> {status}</> : <><ScanSearch className="h-5 w-5" aria-hidden /> Make my move-in report</>}
           </button>
         </div>
       </div>
@@ -179,7 +182,8 @@ export default function MoveIn() {
     const pending = report.items.filter((i) => i.status === "pending").length;
     return (
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-        <h1 className="font-serif text-3xl font-semibold">Check every line</h1>
+        <div className="mb-6"><Stepper current={2} compact /></div>
+        <h1 className="font-display tracking-tight text-3xl font-semibold">Check every line</h1>
         <p className="mt-3 text-muted">
           This report is your evidence, so you have to stand behind it. Fix anything that&apos;s wrong, remove anything that
           isn&apos;t there, then confirm.
@@ -234,7 +238,7 @@ export default function MoveIn() {
                 Confirm the rest
               </button>
             )}
-            <button className="btn-primary" disabled={pending > 0} onClick={finish}>Create my report (PDF)</button>
+            <button className="btn-primary" disabled={pending > 0} onClick={finish}><FileDown className="h-5 w-5" aria-hidden /> Create my report (PDF)</button>
           </span>
         </div>
       </div>
@@ -247,7 +251,8 @@ export default function MoveIn() {
   )}`;
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
-      <h1 className="font-serif text-3xl font-semibold">Your report is downloaded</h1>
+      <div className="mb-6"><Stepper current={3} compact /></div>
+      <h1 className="font-display tracking-tight text-3xl font-semibold">Your report is downloaded</h1>
       <div className="card mt-6 space-y-4 text-[15px]">
         <p><strong>1. Email it to your landlord or manager today.</strong> Attach the PDF. Their reply (or even just your sent email) dates your evidence.</p>
         <a className="btn-primary" href={mailto}>Open an email to send it</a>

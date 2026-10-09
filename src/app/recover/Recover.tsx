@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { AlertTriangle, Check, Copy, Download } from "lucide-react";
+import Stepper from "@/components/Stepper";
 import { useMemo, useState } from "react";
 import { buildDemandLetter, type Parties } from "@/lib/content/letters";
 import { LANGUAGES } from "@/lib/content/languages";
@@ -141,6 +143,7 @@ export default function Recover() {
 
     return (
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+        <div className="mb-6"><Stepper current={3} compact /></div>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <button className="text-sm text-muted underline" onClick={() => setShowVerdict(false)}>← Change my answers</button>
           <label className="flex items-center gap-2 text-sm">
@@ -159,10 +162,21 @@ export default function Recover() {
             <button className="underline" onClick={() => setLang("en")}>Show English</button>
           </p>
         )}
-        <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-accent">{v.lawName ?? "Your situation"} · {v.confidence}</p>
-        <h1 className="mt-2 font-serif text-3xl font-semibold sm:text-4xl">{t(v.title)}</h1>
+        <div className="mt-6 flex flex-wrap items-center gap-2">
+          {(() => {
+            // The legal deadline comes first in the list; show how late they are, loudly.
+            const late = v.deadlines.find((d) => (d.daysOverdue ?? 0) > 0);
+            return late ? (
+              <span className="inline-flex items-center gap-1.5 rounded-lg bg-warn px-3 py-1.5 text-sm font-bold text-white dark:text-slate-950">
+                <AlertTriangle className="h-4 w-4" aria-hidden /> {late.daysOverdue} days overdue
+              </span>
+            ) : null;
+          })()}
+          <p className="text-sm font-semibold uppercase tracking-wider text-accent">{v.lawName ?? "Your situation"} · {v.confidence}</p>
+        </div>
+        <h1 className="mt-2 font-display tracking-tight text-3xl font-semibold sm:text-4xl">{t(v.title)}</h1>
         <p className="mt-4 text-lg">{t(v.summary)}</p>
-        <p className="mt-4 font-serif text-3xl font-semibold text-accent">
+        <p className="mt-4 font-display tracking-tight text-3xl font-semibold text-accent">
           {v.amountOwed.toLocaleString("en-AU", { style: "currency", currency: "AUD" })} <span className="text-base font-normal text-muted">owed to you</span>
         </p>
 
@@ -200,6 +214,7 @@ export default function Recover() {
           <div className="flex items-center justify-between gap-3">
             <h2 className="font-semibold">Your letter <span className="text-xs font-normal text-muted">(English, as sent)</span></h2>
             <button className="btn-ghost py-2 text-sm" onClick={() => { navigator.clipboard.writeText(`${letter.subject}\n\n${letter.body}`); setCopied(true); }}>
+              {copied ? <Check className="h-4 w-4" aria-hidden /> : <Copy className="h-4 w-4" aria-hidden />}
               {copied ? "Copied" : "Copy"}
             </button>
           </div>
@@ -236,7 +251,7 @@ export default function Recover() {
               );
             }}
           >
-            Download my claim pack (PDF)
+            <Download className="h-5 w-5" aria-hidden /> Download my claim pack (PDF)
           </button>
         </div>
 
@@ -251,7 +266,8 @@ export default function Recover() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-      <h1 className="font-serif text-3xl font-semibold">Didn&apos;t get your bond back?</h1>
+      <div className="mb-6"><Stepper current={3} compact /></div>
+      <h1 className="font-display tracking-tight text-3xl font-semibold">Didn&apos;t get your bond back?</h1>
       <p className="mt-3 text-muted">A few questions to work out which rules apply to you. Answer &quot;not sure&quot; whenever you&apos;re not sure.</p>
       <button className="mt-3 text-sm underline" onClick={() => { setFacts(EXAMPLE.facts); setParties(EXAMPLE.parties); }}>
         Fill in an example case

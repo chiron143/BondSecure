@@ -1,31 +1,40 @@
 @import "tailwindcss";
 
-/* Bond Secure palette: paper, ink and a deep "receipt" green that reads as trustworthy. */
+/* Bond Secure palette: cool slate surfaces, dark slate for structure, emerald for "go" actions.
+   Text colours hold at least 4.5:1 contrast on their backgrounds in both themes. */
 :root {
-  --paper: #f7f5ef;
+  --paper: #f1f5f9; /* slate-100 */
   --card: #ffffff;
-  --ink: #1c2126;
-  --muted: #5d6670;
-  --line: #e3dfd4;
-  --accent: #0f6654;
+  --ink: #0f172a; /* slate-900 */
+  --muted: #475569; /* slate-600 */
+  --line: #e2e8f0; /* slate-200 */
+  --accent: #047857; /* emerald-700 */
   --accent-ink: #ffffff;
-  --accent-soft: #e3f0ec;
-  --warn: #b0401a;
-  --warn-soft: #fbece5;
+  --accent-soft: #ecfdf5; /* emerald-50 */
+  --warn: #b91c1c; /* red-700 */
+  --warn-soft: #fef2f2;
+  --navy: #0f172a; /* hero and structure */
+  --navy-ink: #e2e8f0;
+  --navy-muted: #94a3b8;
+  --navy-line: #1e293b;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #14171a;
-    --card: #1c2024;
-    --ink: #e8e6e0;
-    --muted: #9aa3ab;
-    --line: #2e343a;
-    --accent: #5cc4a8;
-    --accent-ink: #0b1a16;
-    --accent-soft: #173029;
-    --warn: #f08a62;
-    --warn-soft: #34201a;
+    --paper: #020617;
+    --card: #0f172a;
+    --ink: #e2e8f0;
+    --muted: #94a3b8;
+    --line: #1e293b;
+    --accent: #34d399;
+    --accent-ink: #022c22;
+    --accent-soft: #052e25;
+    --warn: #f87171;
+    --warn-soft: #2a0f12;
+    --navy: #0b1222;
+    --navy-ink: #e2e8f0;
+    --navy-muted: #94a3b8;
+    --navy-line: #1e293b;
   }
 }
 
@@ -40,8 +49,12 @@
   --color-accent-soft: var(--accent-soft);
   --color-warn: var(--warn);
   --color-warn-soft: var(--warn-soft);
+  --color-navy: var(--navy);
+  --color-navy-ink: var(--navy-ink);
+  --color-navy-muted: var(--navy-muted);
+  --color-navy-line: var(--navy-line);
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
@@ -51,7 +64,7 @@ body {
 }
 
 @utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-[15px] font-semibold transition disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-[15px] font-semibold transition disabled:opacity-50;
 }
 @utility btn-primary {
   @apply btn bg-accent text-accent-ink hover:opacity-90;
@@ -66,5 +79,5 @@ body {
   @apply mb-1.5 block text-sm font-semibold;
 }
 @utility card {
-  @apply rounded-2xl border border-line bg-card p-5 sm:p-6;
+  @apply rounded-2xl border border-line bg-card p-5 shadow-sm sm:p-6;
 }

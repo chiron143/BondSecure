@@ -1,132 +1,228 @@
+import {
+  AlertTriangle,
+  ArrowRight,
+  BadgeCheck,
+  CalendarClock,
+  Download,
+  Film,
+  Globe,
+  Landmark,
+  Scale,
+  ShieldCheck,
+  Upload,
+} from "lucide-react";
 import Link from "next/link";
-import { aiPrivacyLine } from "@/lib/content/privacy";
+import CopyButton from "@/components/CopyButton";
+import Stepper from "@/components/Stepper";
+import { aiPrivacyLine, isPaidTier } from "@/lib/content/privacy";
+import { SOURCES } from "@/lib/content/sources";
 import { VOICES } from "@/lib/content/voices";
 
+// Example only (Sample Rooms is not a real operator). Mirrors what the app produces.
+const EXAMPLE_FINDINGS = [
+  { t: "00:08", room: "Bedroom", item: "Wall beside light switch", note: "Two dark scuff marks, about 10 cm long", tag: "Damaged" },
+  { t: "00:21", room: "Bedroom", item: "Desk", note: "Front left corner chipped, bare wood showing", tag: "Damaged" },
+  { t: "00:36", room: "Bedroom", item: "Window blind", note: "Two slats bent near the bottom", tag: "Damaged" },
+  { t: "00:42", room: "Ensuite", item: "Floor tile by door", note: "Small chip in one tile corner", tag: "Damaged" },
+];
+
+const EXAMPLE_LETTER = `Dear Sample Rooms,
+
+I paid a security deposit of $802.00 on 2 February 2026 for my room at Room 12, 100 Example Street, Surry Hills NSW 2010. My occupancy ended on 20 August 2026.
+
+Under the occupancy principles in the Boarding Houses Act 2012 (NSW), a security deposit must be refunded within 14 days after the resident leaves, less only permitted deductions. That date was 3 September 2026, which is now 36 days ago.
+
+I request that you refund $802.00 to me in full by 16 October 2026…`;
+
+const boardingSource = SOURCES.find((s) => s.id === "boarding-deposit")!;
+
 export default function Home() {
+  const paid = isPaidTier();
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6">
-      <section className="grid gap-10 py-10 sm:py-16 md:grid-cols-[1.2fr_1fr] md:items-center">
-        <div>
-          <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-accent">For international students renting in NSW</p>
-          <h1 className="font-serif text-4xl leading-tight font-semibold sm:text-5xl">
+    <div>
+      {/* Hero */}
+      <section className="bg-navy text-navy-ink">
+        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
+          <p className="inline-flex items-center gap-2 rounded-full border border-navy-line px-3 py-1 text-xs font-semibold uppercase tracking-wider text-navy-muted">
+            <Globe className="h-3.5 w-3.5" aria-hidden /> For international students renting in NSW
+          </p>
+          <h1 className="mt-5 max-w-3xl font-display text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl">
             Your bond is your money. Keep the proof, and get it back.
           </h1>
-          <p className="mt-5 max-w-xl text-lg text-muted">
-            New to renting in Sydney? Film your room on move-in day and Bond Secure turns it into a proper condition report. If
-            your bond or deposit doesn&apos;t come back, it tells you which NSW rules apply, whether they&apos;ve broken them,
-            and gives you the letter and steps to get it back, explained in your language.
+          <p className="mt-5 max-w-2xl text-lg text-navy-muted">
+            New to renting in Sydney? Film your room on move-in day and get a proper condition report. If your bond
+            doesn&apos;t come back, find out which NSW rules apply, how late they are, and get the letter to send, explained in
+            your language.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/move-in" className="btn-primary">I&apos;m moving in</Link>
-            <Link href="/recover" className="btn-ghost">I didn&apos;t get my bond back</Link>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link href="/move-in" className="btn-primary bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
+              <Upload className="h-5 w-5" aria-hidden /> I&apos;m moving in
+            </Link>
+            <Link href="/recover" className="btn border border-navy-line bg-white/5 text-white hover:bg-white/10">
+              I didn&apos;t get my bond back <ArrowRight className="h-5 w-5" aria-hidden />
+            </Link>
           </div>
-          <p className="mt-4 text-sm text-muted">
-            Free. No account, no database. {aiPrivacyLine()}{" "}
-            <Link href="/privacy" className="underline">How your data is handled</Link>
-          </p>
-        </div>
 
-        <div className="card relative overflow-hidden">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted">Example result</p>
-          <p className="mt-3 font-serif text-2xl font-semibold">Your deposit was due back on 3 September. They&apos;re 36 days late.</p>
-          <p className="mt-3 text-sm text-muted">Boarding Houses Act 2012 · $802 owed</p>
-          <ul className="mt-5 space-y-2 text-sm">
-            {["Demand letter, ready to send", "Move-in photos of damage that was already there", "NCAT application kit if they still don't pay"].map((t) => (
-              <li key={t} className="flex gap-2">
-                <span className="text-accent">✓</span>
-                {t}
+          <ul className="mt-8 flex flex-wrap gap-2 text-sm">
+            {[
+              { Icon: BadgeCheck, text: "100% free, no account" },
+              { Icon: ShieldCheck, text: paid ? "Video deleted after analysis" : "No database, nothing kept by us" },
+              { Icon: Scale, text: "Every rule linked to its NSW source" },
+            ].map(({ Icon, text }) => (
+              <li key={text} className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 ring-1 ring-navy-line">
+                <Icon className="h-4 w-4 text-emerald-400" aria-hidden /> {text}
               </li>
             ))}
           </ul>
+          <p className="mt-4 max-w-2xl text-xs text-navy-muted">
+            {aiPrivacyLine()}{" "}
+            <Link href="/privacy" className="underline">How your data is handled</Link>
+          </p>
         </div>
       </section>
 
-      <section className="grid gap-4 py-8 md:grid-cols-3">
-        {[
-          {
-            n: "1",
-            t: "Film your room",
-            d: "Walk through slowly on move-in day and say what you see: \"chip on the tile\", \"fan doesn't work\". Two minutes is enough.",
-          },
-          {
-            n: "2",
-            t: "Get a real report",
-            d: "Every scratch and stain is listed with a still from your video and the time it appears. You check every line before it's final.",
-          },
-          {
-            n: "3",
-            t: "If they keep your money",
-            d: "Months later, upload your move-in report and screenshots of your receipt. Answer a few questions and we work out which law applies, check the deadlines, and give you a claim pack with your evidence already in it.",
-          },
-        ].map((s) => (
-          <div key={s.n} className="card">
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-accent-soft font-semibold text-accent">{s.n}</span>
-            <h2 className="mt-4 text-lg font-semibold">{s.t}</h2>
-            <p className="mt-2 text-[15px] text-muted">{s.d}</p>
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        {/* Steps */}
+        <section className="-mt-6 rounded-2xl border border-line bg-card p-3 shadow-sm sm:p-4">
+          <Stepper />
+        </section>
+
+        {/* Workspace example */}
+        <section className="py-12">
+          <div className="flex flex-wrap items-end justify-between gap-2">
+            <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">What you get</h2>
+            <span className="rounded-full bg-warn-soft px-3 py-1 text-xs font-semibold text-warn">Example · sample data</span>
           </div>
-        ))}
-      </section>
 
-      <section className="py-10">
-        <h2 className="font-serif text-2xl font-semibold sm:text-3xl">This happens to international students all the time</h2>
-        <div className="mt-5 grid gap-4 md:grid-cols-3">
-          {[
-            {
-              n: "1 in 4",
-              d: "legal problems international students brought to a Sydney legal centre were about getting a rental bond back.",
-              s: "UNSW, Kingsford Legal Centre, 2019",
-            },
-            {
-              n: "57%",
-              d: "of international students in share housing met illegal or poor living conditions in their first share house.",
-              s: "Living Precariously survey of 5,000+ students, 2019",
-            },
-            {
-              n: "6",
-              d: "residents of one Sydney student building, our founder included, promised their deposit back “within 15 days” and still waiting weeks later.",
-              s: "Our own building, October 2026",
-            },
-          ].map((x) => (
-            <div key={x.n} className="card">
-              <p className="font-serif text-5xl font-semibold text-accent">{x.n}</p>
-              <p className="mt-3 text-[15px]">{x.d}</p>
-              <p className="mt-2 text-xs text-muted">{x.s}</p>
+          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+            {/* Left: move-in evidence */}
+            <div className="card">
+              <p className="flex items-center gap-2 text-sm font-semibold text-muted">
+                <Film className="h-4 w-4" aria-hidden /> Move-in day · AI inspection of your video
+              </p>
+              <ol className="mt-4 space-y-3">
+                {EXAMPLE_FINDINGS.map((f) => (
+                  <li key={f.t} className="flex gap-3">
+                    <div className="relative grid h-16 w-24 shrink-0 place-items-center overflow-hidden rounded-lg bg-gradient-to-br from-slate-300 to-slate-500 text-white dark:from-slate-700 dark:to-slate-900">
+                      <Film className="h-5 w-5 opacity-70" aria-hidden />
+                      <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1 font-mono text-[10px]">{f.t}</span>
+                    </div>
+                    <div className="min-w-0 text-sm">
+                      <p className="font-semibold">
+                        <span className="font-mono text-accent">{f.t}</span> · {f.room}: {f.item}
+                      </p>
+                      <p className="text-muted">{f.note}</p>
+                      <span className="mt-1 inline-block rounded-full bg-warn-soft px-2 py-0.5 text-xs font-semibold text-warn">{f.tag}</span>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-4 text-xs text-muted">
+                Each still is taken from your own video at that second. You confirm every line before the PDF is made.
+              </p>
             </div>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-muted">
-          Many had no receipt, no written agreement and no record of the room&apos;s condition.{" "}
-          <Link href="/sources" className="underline">Sources</Link>
-        </p>
-        {VOICES.length > 0 && (
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {VOICES.map((v) => (
-              <figure key={v.quote} className="card">
-                <blockquote className="font-serif text-lg">&ldquo;{v.quote}&rdquo;</blockquote>
-                <figcaption className="mt-2 text-sm text-muted">{v.who}</figcaption>
-              </figure>
+
+            {/* Right: legal status and claim pack */}
+            <div className="card flex flex-col">
+              <p className="flex items-center gap-2 text-sm font-semibold text-muted">
+                <Landmark className="h-4 w-4" aria-hidden /> Months later · your legal position
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center gap-1.5 rounded-lg bg-warn px-3 py-1.5 text-sm font-bold text-white dark:text-slate-950">
+                  <AlertTriangle className="h-4 w-4" aria-hidden /> 36 days overdue
+                </span>
+                <span className="font-display text-2xl font-bold tracking-tight">$802 owed</span>
+              </div>
+              <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-xl bg-paper p-3">
+                  <dt className="flex items-center gap-1.5 text-muted"><CalendarClock className="h-4 w-4" aria-hidden /> Due back</dt>
+                  <dd className="mt-0.5 font-semibold">3 September 2026</dd>
+                </div>
+                <div className="rounded-xl bg-paper p-3">
+                  <dt className="flex items-center gap-1.5 text-muted"><Scale className="h-4 w-4" aria-hidden /> Law</dt>
+                  <dd className="mt-0.5 font-semibold">
+                    <a className="underline" href={boardingSource.url}>Boarding Houses Act 2012</a>
+                  </dd>
+                </div>
+              </dl>
+
+              <div className="mt-4 flex-1 rounded-xl border border-line">
+                <div className="flex items-center justify-between gap-2 border-b border-line px-3 py-2">
+                  <span className="text-sm font-semibold">Demand letter</span>
+                  <CopyButton text={EXAMPLE_LETTER} />
+                </div>
+                <pre className="max-h-48 overflow-auto whitespace-pre-wrap p-3 font-sans text-sm text-muted">{EXAMPLE_LETTER}</pre>
+              </div>
+              <Link href="/recover" className="btn-primary mt-4">
+                <Download className="h-5 w-5" aria-hidden /> Make my own claim pack
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Evidence of the problem */}
+        <section className="pb-12">
+          <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">This happens to international students all the time</h2>
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            {[
+              {
+                n: "1 in 4",
+                d: "legal problems international students brought to a Sydney legal centre were about getting a rental bond back.",
+                s: "UNSW, Kingsford Legal Centre, 2019",
+              },
+              {
+                n: "57%",
+                d: "of international students in share housing met illegal or poor living conditions in their first share house.",
+                s: "Living Precariously survey of 5,000+ students, 2019",
+              },
+              {
+                n: "6",
+                d: "residents of one Sydney student building, our founder included, promised their deposit back “within 15 days” and still waiting weeks later.",
+                s: "Our own building, October 2026",
+              },
+            ].map((x) => (
+              <div key={x.n} className="card">
+                <p className="font-display text-5xl font-bold tracking-tight text-accent">{x.n}</p>
+                <p className="mt-3 text-[15px]">{x.d}</p>
+                <p className="mt-2 text-xs text-muted">{x.s}</p>
+              </div>
             ))}
           </div>
-        )}
-      </section>
+          <p className="mt-3 text-sm text-muted">
+            Many had no receipt, no written agreement and no record of the room&apos;s condition.{" "}
+            <Link href="/sources" className="underline">Sources</Link>
+          </p>
+          {VOICES.length > 0 && (
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {VOICES.map((v) => (
+                <figure key={v.quote} className="card">
+                  <blockquote className="text-lg">&ldquo;{v.quote}&rdquo;</blockquote>
+                  <figcaption className="mt-2 text-sm text-muted">{v.who}</figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
+        </section>
 
-      <section className="grid gap-4 pb-10 md:grid-cols-2">
-        <div className="card">
-          <h2 className="text-lg font-semibold">Built for how students actually rent</h2>
-          <p className="mt-2 text-[15px] text-muted">
-            Paid your deposit to a building manager? Living in student accommodation run by a company? Bond never lodged with
-            Fair Trading? Those are the cases other tools skip, and the ones we start with. Your result can be explained in
-            Chinese, Hindi, Nepali, Vietnamese and 8 more languages.
-          </p>
-        </div>
-        <div className="card">
-          <h2 className="text-lg font-semibold">Honest about what it is</h2>
-          <p className="mt-2 text-[15px] text-muted">
-            Legal information, not legal advice. Every rule is linked to its official source. When your situation is unclear,
-            we tell you to call a free legal service instead of guessing.
-          </p>
-        </div>
-      </section>
+        <section className="grid gap-4 pb-12 md:grid-cols-2">
+          <div className="card">
+            <h2 className="text-lg font-semibold">Built for how students actually rent</h2>
+            <p className="mt-2 text-[15px] text-muted">
+              Paid your deposit to a building manager? Living in student accommodation run by a company? Bond never lodged
+              with Fair Trading? Those are the cases other tools skip, and the ones we start with. Your result can be
+              explained in Chinese, Hindi, Nepali, Vietnamese and 8 more languages.
+            </p>
+          </div>
+          <div className="card">
+            <h2 className="text-lg font-semibold">Honest about what it is</h2>
+            <p className="mt-2 text-[15px] text-muted">
+              Legal information, not legal advice. Which law applies and every deadline are worked out by tested rules, not
+              AI, and each rule links to its official source. When your situation is unclear, we tell you to call a free
+              legal service instead of guessing.
+            </p>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

@@ -6,7 +6,7 @@ export const metadata = { title: "Where our rules come from · Bond Secure" };
 export default function Sources() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <h1 className="font-serif text-3xl font-semibold">Where our rules come from</h1>
+      <h1 className="font-display tracking-tight text-3xl font-semibold">Where our rules come from</h1>
       <p className="mt-3 text-muted">{DISCLAIMER}</p>
       <div className="mt-6 space-y-3">
         {SOURCES.map((s) => (

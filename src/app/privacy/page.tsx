@@ -16,7 +16,7 @@ export default function Privacy() {
   const paid = isPaidTier();
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <h1 className="font-serif text-3xl font-semibold">How your data is handled</h1>
+      <h1 className="font-display tracking-tight text-3xl font-semibold">How your data is handled</h1>
       <p className="mt-3 text-muted">
         Short version: no account, no database, and we don&apos;t keep your video or documents. Three things go to
         Google&apos;s Gemini AI so it can do its job. Everything else stays on your phone.
