@@ -166,14 +166,14 @@ export default function Home() {
           <div className="mt-5 grid gap-4 md:grid-cols-3">
             {[
               {
-                n: "1 in 4",
-                d: "legal problems international students brought to a Sydney legal centre were about getting a rental bond back.",
-                s: "UNSW, Kingsford Legal Centre, 2019",
+                n: "1 in 2",
+                d: "international students rent in the private market, compared with about 1 in 3 other Australians.",
+                s: "Reserve Bank of Australia, July 2025 (survey of 70,000+ students)",
               },
               {
-                n: "57%",
-                d: "of international students in share housing met illegal or poor living conditions in their first share house.",
-                s: "Living Precariously survey of 5,000+ students, 2019",
+                n: "6,800",
+                d: "bond disputes reached the NSW tribunal in 2024: 1 in 4 private rental cases. Most tenants face it alone, without a lawyer.",
+                s: "Law and Justice Foundation of NSW, June 2025",
               },
               {
                 n: "6",
@@ -189,7 +189,8 @@ export default function Home() {
             ))}
           </div>
           <p className="mt-3 text-sm text-muted">
-            Many had no receipt, no written agreement and no record of the room&apos;s condition.{" "}
+            Earlier research found international students often have no receipt, no written agreement and no record of the
+            room&apos;s condition.{" "}
             <Link href="/sources" className="underline">Sources</Link>
           </p>
           {VOICES.length > 0 && (

@@ -98,6 +98,22 @@ export const SOURCES: Source[] = [
     url: "https://www.unsw.edu.au/newsroom/news/2019/12/international-students-exploited-by-landlords",
     checked: "2026-10-10",
   },
+  {
+    id: "research-ncat-2024",
+    rule:
+      "Of 39,707 tenancy applications NCAT finalised in 2024, bonds were the primary order sought in 17.2% (about 6,800 applications), and in 24.4% of Residential Tenancy (private rental) applications. Most tenants represent themselves.",
+    source: "Law and Justice Foundation of NSW, Data-driven Insights into NCAT Tenancy Dispute Resolution (June 2025), Table 5 and p. 14",
+    url: "https://lawfoundation.net.au/wp-content/uploads/2025/06/Data-driven-Insights-Report-FINAL-v4.pdf",
+    checked: "2026-10-10",
+  },
+  {
+    id: "research-rba-2025",
+    rule:
+      "About 50% of over 70,000 international students surveyed in the 2023 Student Experience Survey rent in the private rental market, compared with about one-third of the rest of Australia's population.",
+    source: "Reserve Bank of Australia, Bulletin July 2025, International Students and the Australian Economy (reported by ABC News, 24 Jul 2025)",
+    url: "https://www.abc.net.au/news/2025-07-24/international-students-did-not-drive-rents-inflation-higher-rba/105562616",
+    checked: "2026-10-10",
+  },
 ];
 
 export const HELP_CONTACTS = [
