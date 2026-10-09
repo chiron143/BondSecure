@@ -77,6 +77,8 @@ Goal: a real phone video goes browser → Gemini → structured analysis → sti
 
 **Checkpoint:** a real narrated video produces a report whose stills actually show the items listed.
 
+✅ **Passed 10 Oct:** 56 s narrated iPhone .MOV on the deployed site; every narrated defect found, 5/5 stills show the item, recording time read from metadata. iPhone delivered a 480×360 compressed copy, hence the "Save the exact video" button.
+
 ### Step 2 (MUST): deploy
 1. Import `chiron143/BondSecure` into Vercel. Add `GEMINI_API_KEY` in Vercel project settings (Chiranth does this himself).
 2. Run Step 1's test again on the deployed URL (phone and laptop).
