@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { buildDemandLetter, type Parties } from "@/lib/content/letters";
 import { LANGUAGES } from "@/lib/content/languages";
 import { DISCLAIMER, HELP_CONTACTS } from "@/lib/content/sources";
+import { moveInFitsCase } from "@/lib/movein/usable";
 import { buildClaimPackPdf } from "@/lib/pdf/claimPack";
 import { downloadPdf } from "@/lib/pdf/layout";
 import { addDays, formatDate, todayIso } from "@/lib/rules/dates";
@@ -101,7 +102,7 @@ export default function Recover() {
   const result = useMemo(() => {
     if (!complete || !showVerdict) return null;
     const verdict = buildVerdict(facts as CaseFacts);
-    const letter = buildDemandLetter(facts as CaseFacts, verdict, parties as Parties, Boolean(store.moveIn));
+    const letter = buildDemandLetter(facts as CaseFacts, verdict, parties as Parties, moveInFitsCase(store.moveIn, facts as CaseFacts));
     return { verdict, letter };
   }, [complete, showVerdict, facts, parties, store.moveIn]);
 
@@ -208,7 +209,12 @@ export default function Recover() {
 
         <div className="card mt-4">
           <h2 className="font-semibold">Your evidence</h2>
-          {store.moveIn ? (
+          {store.moveIn && !moveInFitsCase(store.moveIn, facts as CaseFacts) ? (
+            <p className="mt-2 rounded-xl bg-warn-soft p-3 text-sm text-warn">
+              Your saved move-in report is dated {formatDate(store.moveIn.moveInDate)}, after you moved out, so it can&apos;t be
+              evidence for this room and isn&apos;t included. Use your own move-in photos instead.
+            </p>
+          ) : store.moveIn ? (
             <p className="mt-2 text-sm">
               ✓ Your move-in report from {formatDate(store.moveIn.moveInDate)} ({store.moveIn.items.filter((i) => i.status === "confirmed" && i.condition !== "good").length} existing problems) goes into your claim pack.
             </p>

@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { todayIso } from "@/lib/rules/dates";
 import { demoAnalysis } from "@/lib/movein/demo";
 import { grabFrame, loadVideo, sha256 } from "@/lib/movein/browser";
 import { fileReader, readRecordedAt } from "@/lib/movein/mp4";
+import { tidyText } from "@/lib/content/tidy";
 import { formatTimestamp } from "@/lib/movein/format";
 import type { Condition, MoveInAnalysis, MoveInReport, ReportItem } from "@/lib/movein/types";
 import { CONDITION_LABEL, buildConditionReportPdf } from "@/lib/pdf/conditionReport";
@@ -58,6 +59,9 @@ export default function MoveIn() {
   const [report, setReport] = useState<MoveInReport | null>(null);
   const [refilm, setRefilm] = useState<string[]>([]);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  // A link to the exact file that was fingerprinted, so the student can keep that copy.
+  const videoUrl = useMemo(() => (file ? URL.createObjectURL(file) : undefined), [file]);
+  useEffect(() => () => { if (videoUrl) URL.revokeObjectURL(videoUrl); }, [videoUrl]);
 
   async function run(forceDemo = false) {
     if (!file) return;
@@ -91,8 +95,8 @@ export default function MoveIn() {
       }
       setRefilm(analysis.refilm ?? []);
       setReport({
-        propertyAddress: address.trim(),
-        tenantName: name.trim(),
+        propertyAddress: tidyText(address),
+        tenantName: tidyText(name),
         moveInDate,
         video: {
           name: file.name,
@@ -150,8 +154,8 @@ export default function MoveIn() {
           </div>
           <div>
             <label className="label" htmlFor="video">Your walk-through video</label>
-            <input id="video" type="file" accept="video/*" capture="environment" className="field" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-            <p className="mt-1.5 text-xs text-muted">MP4 or MOV from your phone. Keep the original file: the report records its fingerprint.</p>
+            <input id="video" type="file" accept="video/*" className="field" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+            <p className="mt-1.5 text-xs text-muted">Film it now or pick a video you already took. MP4 or MOV.</p>
           </div>
           {error && (
             <div className="rounded-xl bg-warn-soft p-4 text-sm text-warn">
@@ -244,7 +248,15 @@ export default function MoveIn() {
       <div className="card mt-6 space-y-4 text-[15px]">
         <p><strong>1. Email it to your landlord or manager today.</strong> Attach the PDF. Their reply (or even just your sent email) dates your evidence.</p>
         <a className="btn-primary" href={mailto}>Open an email to send it</a>
-        <p><strong>2. Keep the original video.</strong> The report contains its fingerprint, which proves the stills came from that exact file.</p>
+        <p>
+          <strong>2. Save this exact video.</strong> The report contains its fingerprint, which proves the stills came from that
+          file. Phones often shrink a video when you upload it, so the copy in your camera roll may not match. Save this one too.
+        </p>
+        {file && (
+          <a className="btn-ghost" href={videoUrl} download={`move-in-video-${r.moveInDate}-${r.video.sha256.slice(0, 8)}.${file.name.split(".").pop() || "mp4"}`}>
+            Save the exact video ({(file.size / 1024 / 1024).toFixed(1)} MB)
+          </a>
+        )}
         <p><strong>3. Return the official condition report too.</strong> In NSW you have 7 days from moving in. Attach this report to it.</p>
       </div>
       <div className="mt-6 flex flex-wrap gap-3">

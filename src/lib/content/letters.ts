@@ -4,6 +4,7 @@
 
 import { addDays, formatDate, todayIso } from "../rules/dates";
 import type { CaseFacts, Verdict } from "../rules/types";
+import { tidyParties } from "./tidy";
 
 export interface Parties {
   studentName: string;
@@ -31,6 +32,7 @@ export function buildDemandLetter(
   hasMoveInReport: boolean,
   today: string = todayIso(),
 ): Letter {
+  p = tidyParties(p);
   const payBy = formatDate(addDays(today, 7));
   const owed = money(verdict.amountOwed);
   const to = p.landlordLegalName ? `${p.landlordName} (${p.landlordLegalName})` : p.landlordName;

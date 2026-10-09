@@ -2,8 +2,10 @@
 // We deliberately don't claim to map NCAT's form field-by-field: we haven't verified the
 // current form. TODO (Saturday): open the NCAT online form and map these to its actual fields.
 
+import { formatDate } from "../rules/dates";
 import type { CaseFacts, Verdict } from "../rules/types";
 import type { Parties } from "./letters";
+import { tidyParties } from "./tidy";
 
 export interface KitSection {
   heading: string;
@@ -13,7 +15,8 @@ export interface KitSection {
 const money = (n: number) =>
   n.toLocaleString("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 2 });
 
-export function buildNcatKit(facts: CaseFacts, verdict: Verdict, p: Parties): KitSection[] {
+export function buildNcatKit(facts: CaseFacts, verdict: Verdict, parties: Parties): KitSection[] {
+  const p = tidyParties(parties);
   const where: Record<string, string> = {
     A_LODGED_BOND: "Consumer and Commercial Division – tenancy (residential proceedings)",
     B_UNLODGED_BOND: "Consumer and Commercial Division – tenancy (residential proceedings)",
@@ -42,7 +45,7 @@ export function buildNcatKit(facts: CaseFacts, verdict: Verdict, p: Parties): Ki
       heading: "Who you're applying against (the respondent)",
       items: [
         p.landlordLegalName
-          ? `${p.landlordLegalName}, trading as ${p.landlordName}`
+          ? `${p.landlordLegalName} (you dealt with them as "${p.landlordName}"). Name the company, not the staff member you spoke to.`
           : `${p.landlordName}. Use their legal company name if they're a business: look up their ABN at abr.business.gov.au and copy the "Entity name".`,
         `Address of the property: ${p.propertyAddress}`,
       ],
@@ -54,7 +57,7 @@ export function buildNcatKit(facts: CaseFacts, verdict: Verdict, p: Parties): Ki
     {
       heading: "Your story in short (you can paste this)",
       items: [
-        `I paid ${money(facts.amountPaid)}${facts.datePaid ? ` on ${facts.datePaid}` : ""}. I moved out on ${facts.moveOutDate} and returned the keys. ` +
+        `I paid ${money(facts.amountPaid)}${facts.datePaid ? ` on ${formatDate(facts.datePaid)}` : ""}. I moved out on ${formatDate(facts.moveOutDate)} and returned the keys. ` +
           (verdict.amountOwed < facts.amountPaid
             ? `I have been refunded ${money(facts.amountPaid - verdict.amountOwed)}. `
             : "I have not been refunded anything. ") +

@@ -1,6 +1,8 @@
 import { buildNcatKit } from "../content/ncatKit";
 import type { Letter, Parties } from "../content/letters";
 import { DISCLAIMER, HELP_CONTACTS, SOURCES } from "../content/sources";
+import { tidyParties } from "../content/tidy";
+import { moveInFitsCase } from "../movein/usable";
 import { formatDate, todayIso } from "../rules/dates";
 import type { CaseFacts, Verdict } from "../rules/types";
 import { formatTimestamp } from "../movein/format";
@@ -19,7 +21,10 @@ export async function buildClaimPackPdf(args: {
   moveIn?: MoveInReport;
   today?: string;
 }): Promise<Uint8Array> {
-  const { facts, verdict, parties, letter, moveIn } = args;
+  const { facts, verdict, letter } = args;
+  const parties = tidyParties(args.parties);
+  // Never present a report made after move-out as move-in evidence.
+  const moveIn = moveInFitsCase(args.moveIn, facts) ? args.moveIn : undefined;
   const today = args.today ?? todayIso();
   const doc = await Doc.create(`Bond claim pack – ${parties.propertyAddress}`, `Bond Secure claim pack · ${parties.studentName}`);
 
@@ -107,7 +112,8 @@ export async function buildClaimPackPdf(args: {
   doc.bullets(HELP_CONTACTS.map((c) => `${c.name}: ${c.detail} (${c.url})`));
   doc.text("Get help before you act if: " + verdict.getHelpIf.join("; ") + ".", { gap: 10 });
   doc.heading("Where these rules come from", 12);
-  doc.bullets(SOURCES.filter((s) => !s.id.startsWith("research")).map((s) => `${s.source}, checked ${formatDate(s.checked)}: ${s.url}`), { size: 8.5, color: MUTED });
+  const legal = SOURCES.filter((s) => !s.id.startsWith("research") && !SOURCES.some((o) => o.url === s.url && SOURCES.indexOf(o) < SOURCES.indexOf(s)));
+  doc.bullets(legal.map((s) => `${s.source}, checked ${formatDate(s.checked)}: ${s.url}`), { size: 8.5, color: MUTED });
 
   return doc.save();
 }
