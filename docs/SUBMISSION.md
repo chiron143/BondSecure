@@ -6,6 +6,7 @@ Submit at https://www.productcounsel.com.au/builders-hack (one form: website URL
 ## Checklist (things only Chiranth can do)
 
 - [ ] Paste the Gemini key into `.env.local`, then test the live video path locally (SPEC Step 1)
+- [ ] Optional: register for a free ABN Lookup GUID (https://abr.business.gov.au/Tools/WebServicesAgreement), put it in `.env.local` and Vercel as `ABR_GUID`. Without it the app links to the public ABN search instead
 - [ ] Import `chiron143/BondSecure` into Vercel, add `GEMINI_API_KEY` in project settings, deploy (SPEC Step 2)
 - [ ] Film a real 2-minute narrated video of your room (point at 3–4 real marks, say them out loud)
 - [ ] Run it on the deployed URL from your phone; check the stills show the items listed

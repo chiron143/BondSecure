@@ -11,6 +11,7 @@ import { addDays, formatDate, todayIso } from "@/lib/rules/dates";
 import { buildVerdict } from "@/lib/rules/engine";
 import type { Agreement, CaseFacts, Residents, Who, YesNoUnsure } from "@/lib/rules/types";
 import { useStore } from "@/lib/store";
+import AbnFinder from "./AbnFinder";
 import EvidenceReader from "./EvidenceReader";
 
 type Opt<T extends string> = { v: T; label: string; hint?: string };
@@ -330,6 +331,7 @@ export default function Recover() {
           <div>
             <label className="label" htmlFor="ll">Their company name (optional)</label>
             <input id="ll" className="field" value={parties.landlordLegalName ?? ""} onChange={(e) => p({ landlordLegalName: e.target.value || undefined })} placeholder="From their ABN, e.g. Example Pty Ltd" />
+            <AbnFinder tradingName={parties.landlordName} onPick={(landlordLegalName) => p({ landlordLegalName })} />
           </div>
         </div>
 
