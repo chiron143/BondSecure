@@ -17,6 +17,46 @@ import type { MoveInAnalysis } from "../movein/types";
 import { MOVE_IN_PROMPT, MOVE_IN_SCHEMA } from "./prompts";
 
 export const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+// If the main model is overloaded (503) or rate-limited (429), try these in order.
+const FALLBACK_MODELS = (process.env.GEMINI_FALLBACK_MODELS || "gemini-3.7-flash,gemini-3.5-flash")
+  .split(",")
+  .map((m) => m.trim())
+  .filter(Boolean);
+
+const busy = (e: unknown) => {
+  const status = (e as { status?: number }).status;
+  const msg = String((e as Error)?.message ?? "");
+  return status === 429 || status === 500 || status === 503 || /UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overloaded/i.test(msg);
+};
+
+/**
+ * Runs a Gemini call with a short retry, then falls back to other Flash models when
+ * Google is overloaded. Other errors (bad request, bad key) fail straight away.
+ */
+export async function withModelFallback<T>(call: (model: string) => Promise<T>): Promise<T> {
+  const models = [GEMINI_MODEL, ...FALLBACK_MODELS.filter((m) => m !== GEMINI_MODEL)];
+  let last: unknown;
+  for (const model of models) {
+    for (const wait of [0, 2500]) {
+      if (wait) await new Promise((r) => setTimeout(r, wait));
+      try {
+        return await call(model);
+      } catch (e) {
+        last = e;
+        if (!busy(e)) throw friendly(e);
+        console.warn(`Gemini ${model} busy, retrying or falling back`);
+      }
+    }
+  }
+  throw new Error("Google's AI is very busy right now. Wait a minute and try again, or continue with the demo.", { cause: last });
+}
+
+/** Turns the SDK's raw JSON errors into a sentence a student can read. */
+function friendly(e: unknown): Error {
+  const msg = String((e as Error)?.message ?? e);
+  const inner = msg.match(/"message"\s*:\s*"([^"]+)"/)?.[1];
+  return new Error(inner ?? msg, { cause: e });
+}
 const BASE = "https://generativelanguage.googleapis.com";
 
 export function hasGeminiKey(): boolean {
@@ -76,17 +116,19 @@ export async function analyseMoveInVideo(fileName: string): Promise<MoveInAnalys
     // Sample 2 frames/second so small marks aren't skipped (default is 1 fps).
     video.videoMetadata = { fps: 2 };
 
-    const res = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: [{ role: "user", parts: [video, { text: MOVE_IN_PROMPT }] }],
-      config: {
-        responseMimeType: "application/json",
-        responseJsonSchema: MOVE_IN_SCHEMA,
-        mediaResolution: MediaResolution.MEDIA_RESOLUTION_HIGH,
-        temperature: 0.2,
-      },
+    return await withModelFallback(async (model) => {
+      const res = await ai.models.generateContent({
+        model,
+        contents: [{ role: "user", parts: [video, { text: MOVE_IN_PROMPT }] }],
+        config: {
+          responseMimeType: "application/json",
+          responseJsonSchema: MOVE_IN_SCHEMA,
+          mediaResolution: MediaResolution.MEDIA_RESOLUTION_HIGH,
+          temperature: 0.2,
+        },
+      });
+      return parseJson<MoveInAnalysis>(res.text);
     });
-    return parseJson<MoveInAnalysis>(res.text);
   } finally {
     // Uploaded files expire after 48 hours anyway; delete now for privacy, even on failure.
     // Awaited so a serverless function doesn't stop before the delete is sent.
@@ -103,10 +145,12 @@ function parseJson<T>(text: string | undefined): T {
 /** One structured call: some inline parts (images, PDFs) plus a prompt, JSON out. */
 export async function generateJson<T>(parts: Part[], prompt: string, schema: object, temperature = 0.1): Promise<T> {
   const ai = new GoogleGenAI({ apiKey: key() });
-  const res = await ai.models.generateContent({
-    model: GEMINI_MODEL,
-    contents: [{ role: "user", parts: [...parts, { text: prompt }] }],
-    config: { responseMimeType: "application/json", responseJsonSchema: schema, temperature },
+  return withModelFallback(async (model) => {
+    const res = await ai.models.generateContent({
+      model,
+      contents: [{ role: "user", parts: [...parts, { text: prompt }] }],
+      config: { responseMimeType: "application/json", responseJsonSchema: schema, temperature },
+    });
+    return parseJson<T>(res.text);
   });
-  return parseJson<T>(res.text);
 }

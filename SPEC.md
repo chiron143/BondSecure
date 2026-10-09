@@ -46,9 +46,9 @@ Two moments, one job:
 | Move-in flow: upload → fingerprint → analyse → stills → review → PDF | ✅ end to end **in demo mode** | `src/app/move-in/MoveIn.tsx` |
 | Recovery flow: intake → verdict → letter → claim pack | ✅ end to end | `src/app/recover/Recover.tsx` |
 | Landing page, sources page, phone layout | ✅ | `src/app/page.tsx`, `src/app/sources/page.tsx` |
-| Gemini upload + analysis code | ⚠️ **written, never run** (planning workspace couldn't reach Google) | `src/lib/ai/`, `src/app/api/video/` |
-| Step 3: evidence reader (receipts/emails → pre-filled answers, with quotes) | ✅ demo mode tested; live untested until key | `src/app/api/extract`, `src/lib/evidence/`, `recover/EvidenceReader.tsx` |
-| Step 4: verdict translation, 12 languages (letter stays English) | ✅ UI + error path tested; live untested until key | `src/app/api/translate`, `src/lib/content/languages.ts` |
+| Gemini upload + analysis code | ✅ **live tested 9 Oct night**: browser → Gemini direct upload works (no CORS problem); 4/4 defects, right timestamps. Retries + falls back to 3.7/3.5 Flash when 3.8 is overloaded (it was) | `src/lib/ai/`, `src/app/api/video/` |
+| Step 3: evidence reader (receipts/emails → pre-filled answers, with quotes) | ✅ live tested: 11/11 facts from 3 receipt/terms/email images, DD/MM dates right | `src/app/api/extract`, `src/lib/evidence/`, `recover/EvidenceReader.tsx` |
+| Step 4: verdict translation, 12 languages (letter stays English) | ✅ live tested (Hindi) | `src/app/api/translate`, `src/lib/content/languages.ts` |
 | Step 5: recording date from MP4/MOV `mvhd` metadata | ✅ tested | `src/lib/movein/mp4.ts` |
 | Step 5: ABN lookup for the operator's legal name | ✅ fallback (link to public search) tested; live API untested until `ABR_GUID` | `src/app/api/abn`, `src/lib/abn/`, `recover/AbnFinder.tsx` |
 | Deck (4 pages) and demo script | ✅ drafted; page 3 has [brackets] to fill after user testing | `docs/SUBMISSION.md` |
