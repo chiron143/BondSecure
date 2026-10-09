@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { FEEDBACK_URL } from "@/lib/content/feedback";
 import { AlertTriangle, Check, Copy, Download } from "lucide-react";
 import Stepper from "@/components/Stepper";
 import { useMemo, useState } from "react";
@@ -241,6 +242,9 @@ export default function Recover() {
           >
             <Download className="h-5 w-5" aria-hidden /> Download my claim pack (PDF)
           </button>
+        </div>
+        <div className="mt-3">
+          <a className="btn-ghost" href={FEEDBACK_URL} target="_blank" rel="noopener noreferrer">Give feedback (2 min)</a>
         </div>
 
         <div className="mt-8 rounded-2xl border border-line p-5 text-sm text-muted">

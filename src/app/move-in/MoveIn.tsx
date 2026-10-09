@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { FEEDBACK_URL } from "@/lib/content/feedback";
 import { FileDown, Loader2, ScanSearch } from "lucide-react";
 import Stepper from "@/components/Stepper";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -270,6 +271,7 @@ export default function MoveIn() {
       <div className="mt-6 flex flex-wrap gap-3">
         <button className="btn-ghost" onClick={async () => downloadPdf(await buildConditionReportPdf(r), `move-in-report-${r.moveInDate}.pdf`)}>Download again</button>
         <Link className="btn-ghost" href="/recover">Bond not returned? Start a claim</Link>
+        <a className="btn-ghost" href={FEEDBACK_URL} target="_blank" rel="noopener noreferrer">Give feedback (2 min)</a>
       </div>
     </div>
   );

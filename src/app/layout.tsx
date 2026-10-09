@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import { FEEDBACK_URL } from "@/lib/content/feedback";
 import { StoreProvider } from "@/lib/store";
 import "./globals.css";
 
@@ -34,7 +35,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             Legal information for NSW renters, not legal advice. Bond Secure doesn&apos;t file anything for you and doesn&apos;t
             keep your documents. <Link href="/privacy" className="underline">How your data is handled</Link> ·{" "}
             <Link href="/how-it-decides" className="underline">How it decides</Link> ·{" "}
-            <Link href="/sources" className="underline">Where our rules come from</Link>.
+            <Link href="/sources" className="underline">Where our rules come from</Link> ·{" "}
+            <a href={FEEDBACK_URL} target="_blank" rel="noopener noreferrer" className="underline">Give feedback (2 min)</a>.
           </footer>
         </StoreProvider>
       </body>
