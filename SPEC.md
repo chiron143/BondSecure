@@ -47,6 +47,10 @@ Two moments, one job:
 | Recovery flow: intake → verdict → letter → claim pack | ✅ end to end | `src/app/recover/Recover.tsx` |
 | Landing page, sources page, phone layout | ✅ | `src/app/page.tsx`, `src/app/sources/page.tsx` |
 | Gemini upload + analysis code | ⚠️ **written, never run** (planning workspace couldn't reach Google) | `src/lib/ai/`, `src/app/api/video/` |
+| Step 3: evidence reader (receipts/emails → pre-filled answers, with quotes) | ✅ demo mode tested; live untested until key | `src/app/api/extract`, `src/lib/evidence/`, `recover/EvidenceReader.tsx` |
+| Step 4: verdict translation, 12 languages (letter stays English) | ✅ UI + error path tested; live untested until key | `src/app/api/translate`, `src/lib/content/languages.ts` |
+| Step 5: recording date from MP4/MOV `mvhd` metadata | ✅ tested | `src/lib/movein/mp4.ts` |
+| Deck (4 pages) and demo script | ✅ drafted; page 3 has [brackets] to fill after user testing | `docs/SUBMISSION.md` |
 
 `npm test` (unit tests) and `npx next build` both pass. A headless-browser run clicked through both flows with a generated test video and produced both PDFs with no console errors.
 
