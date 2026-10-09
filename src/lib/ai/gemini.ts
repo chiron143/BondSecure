@@ -68,28 +68,30 @@ export async function waitUntilActive(fileName: string, timeoutMs = 120_000) {
 
 export async function analyseMoveInVideo(fileName: string): Promise<MoveInAnalysis> {
   const ai = new GoogleGenAI({ apiKey: key() });
-  const file = await waitUntilActive(fileName);
-  if (!file.uri || !file.mimeType) throw new Error("Uploaded file has no URI.");
+  try {
+    const file = await waitUntilActive(fileName);
+    if (!file.uri || !file.mimeType) throw new Error("Uploaded file has no URI.");
 
-  const video = createPartFromUri(file.uri, file.mimeType);
-  // Sample 2 frames/second so small marks aren't skipped (default is 1 fps).
-  video.videoMetadata = { fps: 2 };
+    const video = createPartFromUri(file.uri, file.mimeType);
+    // Sample 2 frames/second so small marks aren't skipped (default is 1 fps).
+    video.videoMetadata = { fps: 2 };
 
-  const res = await ai.models.generateContent({
-    model: GEMINI_MODEL,
-    contents: [{ role: "user", parts: [video, { text: MOVE_IN_PROMPT }] }],
-    config: {
-      responseMimeType: "application/json",
-      responseJsonSchema: MOVE_IN_SCHEMA,
-      mediaResolution: MediaResolution.MEDIA_RESOLUTION_HIGH,
-      temperature: 0.2,
-    },
-  });
-
-  const parsed = parseJson<MoveInAnalysis>(res.text);
-  // Uploaded files are deleted automatically after 48 hours; delete now for privacy.
-  ai.files.delete({ name: fileName }).catch(() => {});
-  return parsed;
+    const res = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: [{ role: "user", parts: [video, { text: MOVE_IN_PROMPT }] }],
+      config: {
+        responseMimeType: "application/json",
+        responseJsonSchema: MOVE_IN_SCHEMA,
+        mediaResolution: MediaResolution.MEDIA_RESOLUTION_HIGH,
+        temperature: 0.2,
+      },
+    });
+    return parseJson<MoveInAnalysis>(res.text);
+  } finally {
+    // Uploaded files expire after 48 hours anyway; delete now for privacy, even on failure.
+    // Awaited so a serverless function doesn't stop before the delete is sent.
+    await ai.files.delete({ name: fileName }).catch(() => {});
+  }
 }
 
 function parseJson<T>(text: string | undefined): T {

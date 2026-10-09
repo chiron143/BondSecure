@@ -18,7 +18,10 @@ export default function Home() {
             <Link href="/move-in" className="btn-primary">I&apos;m moving in</Link>
             <Link href="/recover" className="btn-ghost">I didn&apos;t get my bond back</Link>
           </div>
-          <p className="mt-4 text-sm text-muted">Free. No account. Your video and documents stay on your device unless you choose AI analysis.</p>
+          <p className="mt-4 text-sm text-muted">
+            Free. No account. Nothing is stored: AI looks at your video once and it&apos;s deleted straight after. Your report
+            and claim pack are made on your phone.
+          </p>
         </div>
 
         <div className="card relative overflow-hidden">
@@ -51,7 +54,7 @@ export default function Home() {
           {
             n: "3",
             t: "If they keep your money",
-            d: "Answer a few questions. We work out which law applies, check the deadlines, and give you a claim pack with your evidence already in it.",
+            d: "Add screenshots of your receipt and their emails, answer a few questions, and we work out which law applies, check the deadlines, and give you a claim pack with your evidence already in it.",
           },
         ].map((s) => (
           <div key={s.n} className="card">
@@ -78,7 +81,8 @@ export default function Home() {
           <h2 className="text-lg font-semibold">Built for how students actually rent</h2>
           <p className="mt-2 text-[15px] text-muted">
             Paid your deposit to a building manager? Living in student accommodation run by a company? Bond never lodged with
-            Fair Trading? Those are the cases other tools skip, and the ones we start with.
+            Fair Trading? Those are the cases other tools skip, and the ones we start with. Your result can be explained in
+            Chinese, Hindi, Nepali, Vietnamese and 8 more languages.
           </p>
         </div>
         <div className="card">
