@@ -28,6 +28,11 @@ The student confirms every AI finding before it's used. When the rules can't pla
 
 No accounts, no database. PDFs are made on the device. The video goes straight from the phone to Gemini and is deleted after analysis. While testing, Gemini runs on Google's free tier, which the site discloses ([/privacy](https://bondsecure.vercel.app/privacy)).
 
+## Next
+
+- **Find the real company behind the trading name.** Operators often trade under one name and are registered under another, and NCAT needs the registered entity. The ABN register lookup is built (`src/app/api/abn`, `recover/AbnFinder.tsx`) and switches on with a free `ABR_GUID` from the Australian Business Register, which takes about five days to approve. Until then the app links to the public ABN search.
+- A lawyer's review of the rules and letters, the paid Gemini tier, other states, and mapping the NCAT kit to NCAT's online form.
+
 ## Run it
 
 ```bash
