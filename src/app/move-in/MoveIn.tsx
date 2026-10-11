@@ -8,7 +8,7 @@ import WorkingPanel from "./WorkingPanel";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { todayIso } from "@/lib/rules/dates";
 import { demoAnalysis } from "@/lib/movein/demo";
-import { grabFrame, loadVideo, sha256 } from "@/lib/movein/browser";
+import { bestFrameTime, grabFrame, loadVideo, sha256 } from "@/lib/movein/browser";
 import { fileReader, readRecordedAt } from "@/lib/movein/mp4";
 import { tidyText } from "@/lib/content/tidy";
 import { formatTimestamp } from "@/lib/movein/format";
@@ -96,7 +96,9 @@ export default function MoveIn() {
       const items: ReportItem[] = [];
       for (const room of analysis.rooms) {
         for (const [n, i] of room.items.entries()) {
-          items.push({ ...i, room: room.room, id: `${room.room}-${n}`, status: "pending", frame: await grabFrame(video, i.t) });
+          // Pick the clearest frame near the AI's timestamp, and use that time in the report.
+          const t = await bestFrameTime(video, i.t);
+          items.push({ ...i, t, room: room.room, id: `${room.room}-${n}`, status: "pending", frame: await grabFrame(video, t) });
         }
       }
       setRefilm(analysis.refilm ?? []);
