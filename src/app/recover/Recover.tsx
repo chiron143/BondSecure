@@ -149,17 +149,20 @@ export default function Recover() {
         )}
         <div className="mt-6 flex flex-wrap items-center gap-2">
           {(() => {
-            // The legal deadline comes first in the list; show how late they are, loudly.
-            const late = v.deadlines.find((d) => (d.daysOverdue ?? 0) > 0);
+            // Only a refund deadline (the legal one, or the date their own terms promised) belongs in this
+            // badge. A missed bond-lodgement date is shown in Deadlines, not as "overdue".
+            const late = v.deadlines.find(
+              (d) => (d.daysOverdue ?? 0) > 0 && (d.label.startsWith("Legal deadline to refund") || d.label.includes("promised")),
+            );
             if (!late) return null;
             // When the path itself is uncertain, so is the deadline: say so in the badge.
             return ex.checkWithAService ? (
               <span className="inline-flex items-center gap-1.5 rounded-lg bg-warn-soft px-3 py-1.5 text-sm font-bold text-warn">
-                <AlertTriangle className="h-4 w-4" aria-hidden /> Possibly {late.daysOverdue} days overdue
+                <AlertTriangle className="h-4 w-4" aria-hidden /> Refund possibly {late.daysOverdue} days overdue
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 rounded-lg bg-warn px-3 py-1.5 text-sm font-bold text-white dark:text-slate-950">
-                <AlertTriangle className="h-4 w-4" aria-hidden /> {late.daysOverdue} days overdue
+                <AlertTriangle className="h-4 w-4" aria-hidden /> Refund {late.daysOverdue} days overdue
               </span>
             );
           })()}
