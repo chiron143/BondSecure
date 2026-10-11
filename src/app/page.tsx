@@ -13,18 +13,34 @@ import {
   ShieldCheck,
   Upload,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import CopyButton from "@/components/CopyButton";
 import { aiPrivacyLine, isPaidTier } from "@/lib/content/privacy";
 import { SOURCES } from "@/lib/content/sources";
 import { VOICES } from "@/lib/content/voices";
 
-// Example only (Sample Rooms is not a real operator). Mirrors what the app produces.
-const EXAMPLE_FINDINGS = [
-  { t: "00:08", room: "Bedroom", item: "Wall beside light switch", note: "Two dark scuff marks, about 10 cm long", tag: "Damaged" },
-  { t: "00:21", room: "Bedroom", item: "Desk", note: "Front left corner chipped, bare wood showing", tag: "Damaged" },
-  { t: "00:36", room: "Bedroom", item: "Window blind", note: "Two slats bent near the bottom", tag: "Damaged" },
-  { t: "00:42", room: "Ensuite", item: "Floor tile by door", note: "Small chip in one tile corner", tag: "Damaged" },
+// A real run: stills and the AI's own descriptions from the founder's 56-second iPhone
+// video of the room they rent (10 Oct 2026). Notes are copied from the report it produced.
+const REAL_FINDINGS = [
+  {
+    t: "00:21",
+    src: "/real-run/0021-upper-wall.jpg",
+    item: "Upper wall",
+    note: "Extensive paint blistering, flaking, and water damage running horizontally across the upper wall above the desk",
+  },
+  {
+    t: "00:28",
+    src: "/real-run/0028-corner-mould.jpg",
+    item: "Wall corner behind desk",
+    note: "Black mould or moisture buildup with flaking and chipped paint near the skirting and corner",
+  },
+  {
+    t: "00:41",
+    src: "/real-run/0041-wall-by-switch.jpg",
+    item: "Wall near switch and bed",
+    note: "Uneven paint patches and peeled paint spots next to wall light switch and above the bed",
+  },
 ];
 
 const EXAMPLE_LETTER = `Dear Sample Rooms,
@@ -109,15 +125,18 @@ export default function Home() {
         <section className="py-12">
           <div className="flex flex-wrap items-end justify-between gap-2">
             <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">What you get</h2>
-            <span className="rounded-full bg-warn-soft px-3 py-1 text-xs font-semibold text-warn">Example · sample data</span>
+
           </div>
 
           <div className="mt-5 grid gap-4 lg:grid-cols-2">
             {/* First: the legal position, the headline job */}
             <div className="card flex flex-col">
-              <p className="flex items-center gap-2 text-sm font-semibold text-muted">
-                <Landmark className="h-4 w-4" aria-hidden /> Your legal position
-              </p>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="flex items-center gap-2 text-sm font-semibold text-muted">
+                  <Landmark className="h-4 w-4" aria-hidden /> Your legal position
+                </p>
+                <span className="rounded-full bg-warn-soft px-2.5 py-0.5 text-xs font-semibold text-warn">Sample case</span>
+              </div>
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <span className="inline-flex items-center gap-1.5 rounded-lg bg-warn px-3 py-1.5 text-sm font-bold text-white dark:text-slate-950">
                   <AlertTriangle className="h-4 w-4" aria-hidden /> 36 days overdue
@@ -150,28 +169,35 @@ export default function Home() {
             </div>
             {/* Second: move-in evidence makes the claim stronger */}
             <div className="card">
-              <p className="flex items-center gap-2 text-sm font-semibold text-muted">
-                <Film className="h-4 w-4" aria-hidden /> Even stronger: proof from move-in day
-              </p>
-              <ol className="mt-4 space-y-3">
-                {EXAMPLE_FINDINGS.map((f) => (
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="flex items-center gap-2 text-sm font-semibold text-muted">
+                  <Film className="h-4 w-4" aria-hidden /> Even stronger: proof from move-in day
+                </p>
+                <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent">Real AI run</span>
+              </div>
+              <ol className="mt-4 space-y-4">
+                {REAL_FINDINGS.map((f) => (
                   <li key={f.t} className="flex gap-3">
-                    <div className="relative grid h-16 w-24 shrink-0 place-items-center overflow-hidden rounded-lg bg-gradient-to-br from-slate-300 to-slate-500 text-white dark:from-slate-700 dark:to-slate-900">
-                      <Film className="h-5 w-5 opacity-70" aria-hidden />
-                      <span className="absolute bottom-1 left-1 rounded bg-black/70 px-1 font-mono text-[10px]">{f.t}</span>
-                    </div>
+                    <Image
+                      src={f.src}
+                      alt={`Still from a real move-in video at ${f.t}: ${f.note}`}
+                      width={480}
+                      height={360}
+                      className="h-24 w-32 shrink-0 rounded-lg object-cover"
+                    />
                     <div className="min-w-0 text-sm">
                       <p className="font-semibold">
-                        <span className="font-mono text-accent">{f.t}</span> · {f.room}: {f.item}
+                        <span className="font-mono text-accent">{f.t}</span> · {f.item}
                       </p>
                       <p className="text-muted">{f.note}</p>
-                      <span className="mt-1 inline-block rounded-full bg-warn-soft px-2 py-0.5 text-xs font-semibold text-warn">{f.tag}</span>
+                      <span className="mt-1 inline-block rounded-full bg-warn-soft px-2 py-0.5 text-xs font-semibold text-warn">Damaged</span>
                     </div>
                   </li>
                 ))}
               </ol>
               <p className="mt-4 text-xs text-muted">
-                Each still is taken from your own video at that second. You confirm every line before the PDF is made.
+                From our founder&apos;s own 56-second iPhone video of their room: the AI found every mark pointed out on camera, and each
+                still is from that video at that second. You confirm every line before the PDF is made.
               </p>
             </div>
 
