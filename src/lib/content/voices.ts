@@ -7,4 +7,16 @@ export interface Voice {
   who: string; // e.g. "International student, Surry Hills"
 }
 
-export const VOICES: Voice[] = [];
+// From the tester feedback form, 10–11 Oct 2026. All 4 testers (international students) agreed
+// to be quoted without their name. Quoted exactly as written.
+export const VOICES: Voice[] = [
+  {
+    quote:
+      "I was having trouble with getting my bond back, after sending the document, he understands to take me seriously. I would definitely recommend this to anyone who has had problems with their money!",
+    who: "International student who tested Bond Secure",
+  },
+  {
+    quote: "company was registered in a different name so was hard to find who to complain to",
+    who: "International student who tested Bond Secure",
+  },
+];

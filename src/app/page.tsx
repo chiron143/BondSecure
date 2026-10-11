@@ -228,7 +228,12 @@ export default function Home() {
             <Link href="/sources" className="underline">Sources</Link>
           </p>
           {VOICES.length > 0 && (
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <p className="mt-8 text-sm font-semibold uppercase tracking-wider text-accent">
+              From the 4 international students who tested it this weekend
+            </p>
+          )}
+          {VOICES.length > 0 && (
+            <div className="mt-3 grid gap-4 md:grid-cols-2">
               {VOICES.map((v) => (
                 <figure key={v.quote} className="card">
                   <blockquote className="text-lg">&ldquo;{v.quote}&rdquo;</blockquote>

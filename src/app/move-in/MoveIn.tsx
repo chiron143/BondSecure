@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { FEEDBACK_URL } from "@/lib/content/feedback";
-import { FileDown, Loader2, ScanSearch } from "lucide-react";
+import { FileDown, Lightbulb, Loader2, Mic, ScanSearch } from "lucide-react";
 import Stepper from "@/components/Stepper";
+import WorkingPanel from "./WorkingPanel";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { todayIso } from "@/lib/rules/dates";
 import { demoAnalysis } from "@/lib/movein/demo";
@@ -58,6 +59,7 @@ export default function MoveIn() {
   const [name, setName] = useState("");
   const [moveInDate, setMoveInDate] = useState(todayIso());
   const [status, setStatus] = useState("");
+  const [startedAt, setStartedAt] = useState(0);
   const [error, setError] = useState("");
   const [report, setReport] = useState<MoveInReport | null>(null);
   const [refilm, setRefilm] = useState<string[]>([]);
@@ -71,6 +73,7 @@ export default function MoveIn() {
     setError("");
     setStep("working");
     try {
+      setStartedAt(Date.now());
       setStatus("Opening your video…");
       const video = await loadVideo(file);
       videoRef.current = video;
@@ -136,10 +139,26 @@ export default function MoveIn() {
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         <div className="mb-6"><Stepper current={1} compact /></div>
         <h1 className="font-display tracking-tight text-3xl font-semibold">Record your room on move-in day</h1>
-        <p className="mt-3 text-muted">
-          Walk through slowly. Get close to anything already damaged, dirty or broken, and say what you see out loud. Turn the
-          lights on. Two minutes per room is plenty.
-        </p>
+        <div className="mt-4 rounded-2xl border border-accent/40 bg-accent-soft p-4">
+          <p className="font-semibold">Before you film</p>
+          <ul className="mt-2 space-y-2 text-[15px]">
+            <li className="flex gap-2">
+              <Mic className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden />
+              <span>
+                <strong>Talk while you film.</strong> Say what you see: &quot;chip on the desk corner&quot;, &quot;fan
+                doesn&apos;t work&quot;. The AI listens, and it catches things a picture can&apos;t show.
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <ScanSearch className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden />
+              <span><strong>Get close to every mark</strong> and hold still for a second or two.</span>
+            </li>
+            <li className="flex gap-2">
+              <Lightbulb className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden />
+              <span><strong>Turn the lights on</strong> and walk slowly. About 2 minutes per room is plenty.</span>
+            </li>
+          </ul>
+        </div>
 
         <div className="card mt-6 space-y-5">
           <div>
@@ -173,6 +192,7 @@ export default function MoveIn() {
           <button className="btn-primary w-full" disabled={!ready || step === "working"} onClick={() => run()}>
             {step === "working" ? <><Loader2 className="h-5 w-5 animate-spin" aria-hidden /> {status}</> : <><ScanSearch className="h-5 w-5" aria-hidden /> Make my move-in report</>}
           </button>
+          {step === "working" && <WorkingPanel status={status} startedAt={startedAt} />}
         </div>
       </div>
     );
