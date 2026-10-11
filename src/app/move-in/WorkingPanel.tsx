@@ -10,7 +10,7 @@ const STAGES = [
   { match: "Fingerprinting", label: "Fingerprint the file, so it proves which video it was" },
   { match: "Preparing", label: "Start a secure upload" },
   { match: "Uploading", label: "Upload to Google's Gemini AI" },
-  { match: "Watching", label: "AI watches and listens (usually 30 to 90 seconds)" },
+  { match: "Watching", label: "AI watches every second and listens (usually 1 to 2 minutes)" },
   { match: "Taking stills", label: "Take stills from your video" },
 ];
 
@@ -46,9 +46,9 @@ export default function WorkingPanel({ status, startedAt }: { status: string; st
         ))}
       </ol>
       <p className="mt-3 text-xs text-muted">
-        {secs > 120
+        {secs > 180
           ? "Taking longer than usual: Google's AI is busy, so we're trying another model. Keep this page open."
-          : "Keep this page open while we work. It usually takes about a minute."}
+          : "This takes a minute or two because the AI checks every second of your video carefully. Keep this page open."}
       </p>
     </div>
   );

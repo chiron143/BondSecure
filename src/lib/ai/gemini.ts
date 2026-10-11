@@ -27,7 +27,9 @@ const FALLBACK_MODELS = (process.env.GEMINI_FALLBACK_MODELS || "gemini-3.6-flash
 // Reading receipts and translating are simple; the quickest model does them well. Video
 // gets the strongest model first, because small marks matter there.
 export const FAST_MODEL = process.env.GEMINI_FAST_MODEL || "gemini-3.5-flash";
-const VIDEO_THINKING = process.env.GEMINI_VIDEO_THINKING || "low";
+// Video keeps the model's full thinking: with "low", testers found it missed marks it
+// used to catch. Accuracy matters more than speed here; the UI says it takes a while.
+const VIDEO_THINKING = process.env.GEMINI_VIDEO_THINKING || "default";
 
 const busy = (e: unknown) => {
   const status = (e as { status?: number }).status;
@@ -136,8 +138,6 @@ export async function analyseMoveInVideo(fileName: string): Promise<MoveInAnalys
           responseJsonSchema: MOVE_IN_SCHEMA,
           mediaResolution: MediaResolution.MEDIA_RESOLUTION_HIGH,
           temperature: 0.2,
-          // Testers found the wait too long. Low thinking is much faster; set
-          // GEMINI_VIDEO_THINKING=default to give the model more time to reason.
           ...(VIDEO_THINKING === "low" ? { thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } } : {}),
         },
       });

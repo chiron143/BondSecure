@@ -41,7 +41,7 @@ async function analyseLive(file: File, onStatus: (s: string) => void): Promise<M
   const fileName: string | undefined = uploaded?.file?.name;
   if (!fileName) throw new Error("Upload finished but no file name came back.");
 
-  onStatus("Watching your video and listening to your narration… (about a minute)");
+  onStatus("Watching your video and listening to your narration… (1 to 2 minutes)");
   const res = await fetch("/api/video/analyse", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
