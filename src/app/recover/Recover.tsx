@@ -72,6 +72,7 @@ export default function Recover() {
   );
   const [showVerdict, setShowVerdict] = useState(Boolean(store.facts));
   const [copied, setCopied] = useState(false);
+  const [triedSubmit, setTriedSubmit] = useState(false);
   const [lang, setLang] = useState("en");
   const [translated, setTranslated] = useState<Record<string, Map<string, string>>>({});
   const [translating, setTranslating] = useState(false);
@@ -80,9 +81,31 @@ export default function Recover() {
   const f = (patch: Partial<CaseFacts>) => setFacts((x) => ({ ...x, ...patch }));
   const p = (patch: Partial<Parties>) => setParties((x) => ({ ...x, ...patch }));
 
-  const complete =
-    facts.state && facts.who && facts.agreement && facts.residents && facts.bondLodged && facts.amountPaid && facts.moveOutDate &&
-    parties.studentName && parties.propertyAddress && parties.landlordName;
+  // Every answer the rules need, in the order it appears on the page (id = where to scroll).
+  const required: { id: string; label: string; ok: unknown }[] = [
+    { id: "q-state", label: "Was it in NSW?", ok: facts.state },
+    { id: "q-who", label: "Who did you rent from?", ok: facts.who },
+    { id: "q-agreement", label: "What did you sign?", ok: facts.agreement },
+    { id: "q-residents", label: "How many people lived there?", ok: facts.residents },
+    { id: "q-lodged", label: "Did you get a bond number?", ok: facts.bondLodged },
+    { id: "paid", label: "Bond or deposit paid", ok: facts.amountPaid },
+    { id: "out", label: "Date you moved out", ok: facts.moveOutDate },
+    { id: "sn", label: "Your full name", ok: parties.studentName?.trim() },
+    { id: "pa", label: "Address of the place", ok: parties.propertyAddress?.trim() },
+    { id: "ln", label: "Who you paid", ok: parties.landlordName?.trim() },
+  ];
+  const missing = required.filter((r) => !r.ok);
+  const complete = missing.length === 0;
+  const flag = (id: string) => triedSubmit && missing.some((m) => m.id === id);
+
+  function submit() {
+    if (complete) return setShowVerdict(true);
+    setTriedSubmit(true);
+    // Take them to the first thing still missing.
+    const el = document.getElementById(missing[0].id);
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (el instanceof HTMLInputElement) el.focus({ preventScroll: true });
+  }
 
   const result = useMemo(() => {
     if (!complete || !showVerdict) return null;
@@ -301,31 +324,31 @@ export default function Recover() {
       />
 
       <div className="card mt-6 space-y-7">
-        <div>
-          <p className="label">Was the place in New South Wales?</p>
+        <div id="q-state" className={flag("q-state") ? "rounded-xl ring-2 ring-warn ring-offset-4 ring-offset-card" : ""}>
+          <p className={`label ${flag("q-state") ? "text-warn" : ""}`}>Was the place in New South Wales?{flag("q-state") && " · please answer"}</p>
           <Choice name="state" value={facts.state} onChange={(state) => f({ state })} opts={[{ v: "NSW", label: "Yes, NSW" }, { v: "other", label: "No, another state" }]} />
         </div>
-        <div>
-          <p className="label">Who did you rent from?</p>
+        <div id="q-who" className={flag("q-who") ? "rounded-xl ring-2 ring-warn ring-offset-4 ring-offset-card" : ""}>
+          <p className={`label ${flag("q-who") ? "text-warn" : ""}`}>Who did you rent from?{flag("q-who") && " · please answer"}</p>
           <Choice name="who" opts={WHO} value={facts.who} onChange={(who) => f({ who })} />
         </div>
-        <div>
-          <p className="label">What did you sign?</p>
+        <div id="q-agreement" className={flag("q-agreement") ? "rounded-xl ring-2 ring-warn ring-offset-4 ring-offset-card" : ""}>
+          <p className={`label ${flag("q-agreement") ? "text-warn" : ""}`}>What did you sign?{flag("q-agreement") && " · please answer"}</p>
           <Choice name="agreement" opts={AGREEMENT} value={facts.agreement} onChange={(agreement) => f({ agreement })} />
         </div>
-        <div>
-          <p className="label">How many people lived there, not counting the owner or manager?</p>
+        <div id="q-residents" className={flag("q-residents") ? "rounded-xl ring-2 ring-warn ring-offset-4 ring-offset-card" : ""}>
+          <p className={`label ${flag("q-residents") ? "text-warn" : ""}`}>How many people lived there, not counting the owner or manager?{flag("q-residents") && " · please answer"}</p>
           <Choice name="residents" opts={RESIDENTS} value={facts.residents} onChange={(residents) => f({ residents })} />
         </div>
-        <div>
-          <p className="label">Did NSW Fair Trading or Rental Bonds Online ever email or text you a bond number?</p>
+        <div id="q-lodged" className={flag("q-lodged") ? "rounded-xl ring-2 ring-warn ring-offset-4 ring-offset-card" : ""}>
+          <p className={`label ${flag("q-lodged") ? "text-warn" : ""}`}>Did NSW Fair Trading or Rental Bonds Online ever email or text you a bond number?{flag("q-lodged") && " · please answer"}</p>
           <Choice name="lodged" opts={LODGED} value={facts.bondLodged} onChange={(bondLodged) => f({ bondLodged })} />
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label className="label" htmlFor="paid">Bond or deposit paid ($)</label>
-            <input id="paid" type="number" min={0} className="field" value={facts.amountPaid ?? ""} onChange={(e) => f({ amountPaid: Number(e.target.value) || undefined })} />
+            <input id="paid" type="number" min={0} className={`field ${flag("paid") ? "border-warn ring-2 ring-warn" : ""}`} value={facts.amountPaid ?? ""} onChange={(e) => f({ amountPaid: Number(e.target.value) || undefined })} />
           </div>
           <div>
             <label className="label" htmlFor="rent">Rent per week ($)</label>
@@ -337,7 +360,7 @@ export default function Recover() {
           </div>
           <div>
             <label className="label" htmlFor="out">Date you moved out and returned keys</label>
-            <input id="out" type="date" className="field" value={facts.moveOutDate ?? ""} onChange={(e) => f({ moveOutDate: e.target.value || undefined })} />
+            <input id="out" type="date" className={`field ${flag("out") ? "border-warn ring-2 ring-warn" : ""}`} value={facts.moveOutDate ?? ""} onChange={(e) => f({ moveOutDate: e.target.value || undefined })} />
           </div>
           <div>
             <label className="label" htmlFor="refunded">Already refunded to you ($)</label>
@@ -358,7 +381,7 @@ export default function Recover() {
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label className="label" htmlFor="sn">Your full name</label>
-            <input id="sn" className="field" value={parties.studentName ?? ""} onChange={(e) => p({ studentName: e.target.value })} />
+            <input id="sn" className={`field ${flag("sn") ? "border-warn ring-2 ring-warn" : ""}`} value={parties.studentName ?? ""} onChange={(e) => p({ studentName: e.target.value })} />
           </div>
           <div>
             <label className="label" htmlFor="se">Your email</label>
@@ -366,11 +389,11 @@ export default function Recover() {
           </div>
           <div className="sm:col-span-2">
             <label className="label" htmlFor="pa">Address of the place</label>
-            <input id="pa" className="field" value={parties.propertyAddress ?? ""} onChange={(e) => p({ propertyAddress: e.target.value })} />
+            <input id="pa" className={`field ${flag("pa") ? "border-warn ring-2 ring-warn" : ""}`} value={parties.propertyAddress ?? ""} onChange={(e) => p({ propertyAddress: e.target.value })} />
           </div>
           <div>
             <label className="label" htmlFor="ln">Who you paid (name you know them by)</label>
-            <input id="ln" className="field" value={parties.landlordName ?? ""} onChange={(e) => p({ landlordName: e.target.value })} />
+            <input id="ln" className={`field ${flag("ln") ? "border-warn ring-2 ring-warn" : ""}`} value={parties.landlordName ?? ""} onChange={(e) => p({ landlordName: e.target.value })} />
           </div>
           <div>
             <label className="label" htmlFor="ll">Their company name (optional)</label>
@@ -379,7 +402,21 @@ export default function Recover() {
           </div>
         </div>
 
-        <button className="btn-primary w-full" disabled={!complete} onClick={() => setShowVerdict(true)}>
+        {triedSubmit && !complete && (
+          <div className="rounded-xl bg-warn-soft p-4 text-sm text-warn" role="alert">
+            <p className="font-semibold">Answer {missing.length === 1 ? "this one" : `these ${missing.length}`} first:</p>
+            <ul className="mt-1 list-disc pl-5">
+              {missing.map((m) => (
+                <li key={m.id}>
+                  <button type="button" className="underline" onClick={() => document.getElementById(m.id)?.scrollIntoView({ behavior: "smooth", block: "center" })}>
+                    {m.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <button className="btn-primary w-full" onClick={submit}>
           Show me where I stand
         </button>
       </div>
