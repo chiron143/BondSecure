@@ -19,7 +19,11 @@ import { MOVE_IN_PROMPT, MOVE_IN_SCHEMA } from "./prompts";
 export const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
 // If the main model is overloaded (503) or rate-limited (429), try these in order.
 // (gemini-3.7-flash currently serves 3.8 under the hood, so it's no use as a fallback.)
-const FALLBACK_MODELS = (process.env.GEMINI_FALLBACK_MODELS || "gemini-3.6-flash,gemini-3.5-flash")
+// The lite models are a last resort for overload spikes: the student still confirms every line.
+const FALLBACK_MODELS = (
+  process.env.GEMINI_FALLBACK_MODELS ||
+  "gemini-3.6-flash,gemini-3.5-flash,gemini-flash-latest,gemini-3.5-flash-lite,gemini-3.1-flash-lite"
+)
   .split(",")
   .map((m) => m.trim())
   .filter(Boolean);
@@ -34,7 +38,8 @@ const VIDEO_THINKING = process.env.GEMINI_VIDEO_THINKING || "default";
 const busy = (e: unknown) => {
   const status = (e as { status?: number }).status;
   const msg = String((e as Error)?.message ?? "");
-  return status === 429 || status === 500 || status === 503 || /UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overloaded/i.test(msg);
+  // 404: that model isn't available to this key, so try the next one.
+  return status === 404 || status === 429 || status === 500 || status === 503 || /UNAVAILABLE|RESOURCE_EXHAUSTED|NOT_FOUND|high demand|overloaded/i.test(msg);
 };
 
 /**
