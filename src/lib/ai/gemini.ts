@@ -39,15 +39,16 @@ const busy = (e: unknown) => {
 
 /**
  * Runs a Gemini call, moving straight on to the next Flash model when Google says it's
- * overloaded (a busy model rarely recovers within seconds, and serverless time is
- * limited). One last short retry on the final model. Other errors fail straight away.
+ * overloaded. Busy errors come back within about a second, so if every model is busy it
+ * pauses and goes round again (up to 3 rounds), giving Google a moment to recover rather
+ * than failing on the first spike. Other errors fail straight away.
  */
 export async function withModelFallback<T>(call: (model: string) => Promise<T>, first = GEMINI_MODEL): Promise<T> {
   const models = [...new Set([first, ...FALLBACK_MODELS, GEMINI_MODEL])];
   let last: unknown;
-  for (const [n, model] of models.entries()) {
-    for (const wait of n === models.length - 1 ? [0, 3000] : [0]) {
-      if (wait) await new Promise((r) => setTimeout(r, wait));
+  for (const pause of [0, 2500, 6000]) {
+    if (pause) await new Promise((r) => setTimeout(r, pause));
+    for (const model of models) {
       try {
         const started = Date.now();
         const out = await call(model);
@@ -57,7 +58,7 @@ export async function withModelFallback<T>(call: (model: string) => Promise<T>, 
       } catch (e) {
         last = e;
         if (!busy(e)) throw friendly(e);
-        console.warn(`Gemini ${model} busy, retrying or falling back`);
+        console.warn(`Gemini ${model} busy, trying the next model`);
       }
     }
   }
