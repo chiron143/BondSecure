@@ -62,7 +62,17 @@ export async function withModelFallback<T>(call: (model: string) => Promise<T>, 
       }
     }
   }
-  throw new Error("Google's AI is very busy right now. Wait a minute and try again, or continue with the demo.", { cause: last });
+  // Say which kind of "no" Google gave: overloaded (503) is temporary, a quota limit (429) isn't.
+  const status = (last as { status?: number })?.status;
+  const msg = String((last as Error)?.message ?? "");
+  const quota = status === 429 || /RESOURCE_EXHAUSTED|quota/i.test(msg);
+  console.warn(`Gemini gave up: ${status ?? "?"} ${quota ? "quota" : "busy"}`);
+  throw new Error(
+    quota
+      ? `Our AI allowance with Google has run out for now (code ${status ?? 429}). Continue with the demo, or try again later.`
+      : `Google's AI is very busy right now (code ${status ?? 503}). Wait a minute and try again, or continue with the demo.`,
+    { cause: last },
+  );
 }
 
 /** Turns the SDK's raw JSON errors into a sentence a student can read. */
