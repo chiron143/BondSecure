@@ -46,7 +46,12 @@ const busy = (e: unknown) => {
 export async function withModelFallback<T>(call: (model: string) => Promise<T>, first = GEMINI_MODEL): Promise<T> {
   const models = [...new Set([first, ...FALLBACK_MODELS, GEMINI_MODEL])];
   let last: unknown;
+  const isQuota = (e: unknown) =>
+    (e as { status?: number })?.status === 429 || /RESOURCE_EXHAUSTED|quota/i.test(String((e as Error)?.message ?? ""));
   for (const pause of [0, 2500, 6000]) {
+    // Going round again only helps when models were busy; an exhausted quota won't come back
+    // in seconds, and every extra try would spend more of it.
+    if (pause && isQuota(last)) break;
     if (pause) await new Promise((r) => setTimeout(r, pause));
     for (const model of models) {
       try {
@@ -65,7 +70,7 @@ export async function withModelFallback<T>(call: (model: string) => Promise<T>, 
   // Say which kind of "no" Google gave: overloaded (503) is temporary, a quota limit (429) isn't.
   const status = (last as { status?: number })?.status;
   const msg = String((last as Error)?.message ?? "");
-  const quota = status === 429 || /RESOURCE_EXHAUSTED|quota/i.test(msg);
+  const quota = isQuota(last) || /RESOURCE_EXHAUSTED|quota/i.test(msg);
   console.warn(`Gemini gave up: ${status ?? "?"} ${quota ? "quota" : "busy"}`);
   throw new Error(
     quota
