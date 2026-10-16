@@ -70,8 +70,8 @@ export const EXAMPLE_CASES: ExampleCase[] = [
 ];
 
 export const EXAMPLE_PARTIES: Parties = {
-  studentName: "Priya Sharma",
-  studentEmail: "priya@example.com",
+  studentName: "Mei Chen",
+  studentEmail: "mei.chen@example.com",
   propertyAddress: "Room 12, 100 Example Street, Surry Hills NSW 2010",
   landlordName: "Sample Rooms",
 };
