@@ -16,6 +16,10 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import CopyButton from "@/components/CopyButton";
+import HeroPhone from "@/components/home/HeroPhone";
+import ShimmerLink from "@/components/ShimmerLink";
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
+import { GridPattern } from "@/components/ui/grid-pattern";
 import { aiPrivacyLine, isPaidTier } from "@/lib/content/privacy";
 import { SOURCES } from "@/lib/content/sources";
 import { VOICES } from "@/lib/content/voices";
@@ -58,43 +62,68 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-navy text-navy-ink">
-        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
-          <p className="inline-flex items-center gap-2 rounded-full border border-navy-line px-3 py-1 text-xs font-semibold uppercase tracking-wider text-navy-muted">
-            <Globe className="h-3.5 w-3.5" aria-hidden /> For international students renting in NSW
-          </p>
-          <h1 className="mt-5 max-w-3xl font-display text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl">
-            Bond not back? Find out which law they&apos;ve broken, and demand it back today.
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-navy-muted">
-            Answer a few plain questions, or drop in your receipt and their emails. Tested NSW rules tell you which law applies
-            and exactly how many days late they are. You get a formal demand letter and a claim pack with your evidence,
-            explained in your language.
-          </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="/recover" className="btn-primary bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
-              Get my bond back <ArrowRight className="h-5 w-5" aria-hidden />
-            </Link>
-            <Link href="/move-in" className="btn border border-navy-line bg-white/5 text-white hover:bg-white/10">
-              <Upload className="h-5 w-5" aria-hidden /> Moving in? Protect your bond first
-            </Link>
+      <section className="relative isolate overflow-hidden bg-navy text-navy-ink">
+        {/* Aurora glow and a faint grid behind everything */}
+        <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden>
+          <div className="animate-aurora absolute -top-40 -left-32 size-[34rem] rounded-full bg-emerald-500/25 blur-3xl" />
+          <div className="animate-aurora-slow absolute top-20 -right-40 size-[30rem] rounded-full bg-sky-500/20 blur-3xl" />
+          <div className="animate-aurora absolute -bottom-48 left-1/3 size-[26rem] rounded-full bg-teal-400/15 blur-3xl [animation-delay:-6s]" />
+          <GridPattern
+            width={44}
+            height={44}
+            className="fill-white/[0.02] stroke-white/[0.06] [mask-image:radial-gradient(ellipse_at_top,white_20%,transparent_70%)]"
+          />
+        </div>
+
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.15fr_1fr]">
+          <div>
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold tracking-wider uppercase backdrop-blur">
+              <Globe className="h-3.5 w-3.5 text-emerald-400" aria-hidden />
+              <AnimatedShinyText className="mx-0 max-w-none text-navy-muted [--shiny-width:120px]">
+                For international students renting in NSW
+              </AnimatedShinyText>
+            </p>
+            <h1 className="mt-6 font-display text-4xl leading-[1.05] font-bold tracking-tight text-balance text-white sm:text-5xl xl:text-[3.5rem]">
+              Bond not back? Find out which law they&apos;ve broken, and{" "}
+              <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-sky-300 bg-clip-text text-transparent">
+                demand it back today.
+              </span>
+            </h1>
+            <p className="mt-6 max-w-xl text-lg text-navy-muted">
+              Answer a few plain questions, or drop in your receipt and their emails. Tested NSW rules tell you which law applies
+              and exactly how many days late they are. You get a formal demand letter and a claim pack with your evidence,
+              explained in your language.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <ShimmerLink href="/recover">
+                Get my bond back <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              </ShimmerLink>
+              <Link
+                href="/move-in"
+                className="btn border border-white/15 bg-white/5 text-white backdrop-blur transition hover:border-white/30 hover:bg-white/10"
+              >
+                <Upload className="h-5 w-5" aria-hidden /> Moving in? Protect your bond first
+              </Link>
+            </div>
+
+            <ul className="mt-8 flex flex-wrap gap-2 text-sm">
+              {[
+                { Icon: BadgeCheck, text: "100% free, no account" },
+                { Icon: ShieldCheck, text: paid ? "Video deleted after analysis" : "No database, nothing kept by us" },
+                { Icon: Scale, text: "Every rule linked to its NSW source" },
+              ].map(({ Icon, text }) => (
+                <li key={text} className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 ring-1 ring-white/10 backdrop-blur">
+                  <Icon className="h-4 w-4 text-emerald-400" aria-hidden /> {text}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 max-w-xl text-xs text-navy-muted">
+              {aiPrivacyLine()}{" "}
+              <Link href="/privacy" className="underline">How your data is handled</Link>
+            </p>
           </div>
 
-          <ul className="mt-8 flex flex-wrap gap-2 text-sm">
-            {[
-              { Icon: BadgeCheck, text: "100% free, no account" },
-              { Icon: ShieldCheck, text: paid ? "Video deleted after analysis" : "No database, nothing kept by us" },
-              { Icon: Scale, text: "Every rule linked to its NSW source" },
-            ].map(({ Icon, text }) => (
-              <li key={text} className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 ring-1 ring-navy-line">
-                <Icon className="h-4 w-4 text-emerald-400" aria-hidden /> {text}
-              </li>
-            ))}
-          </ul>
-          <p className="mt-4 max-w-2xl text-xs text-navy-muted">
-            {aiPrivacyLine()}{" "}
-            <Link href="/privacy" className="underline">How your data is handled</Link>
-          </p>
+          <HeroPhone />
         </div>
       </section>
 

@@ -29,8 +29,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 Bond Secure
               </Link>
               <nav className="flex gap-4 text-sm font-medium text-navy-muted">
-                <Link href="/recover" className="hover:text-white">Get my bond back</Link>
-                <Link href="/move-in" className="hover:text-white">Moving in</Link>
+                <Link href="/recover" className="hover:text-white">
+                  <span className="sm:hidden">Claim</span>
+                  <span className="hidden sm:inline">Get my bond back</span>
+                </Link>
+                <Link href="/move-in" className="hover:text-white">
+                  <span className="sm:hidden">Move in</span>
+                  <span className="hidden sm:inline">Moving in</span>
+                </Link>
               </nav>
             </header>
           </div>
