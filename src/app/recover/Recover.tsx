@@ -370,11 +370,11 @@ export default function Recover() {
         </p>
         <div className="mt-6">
           <p className="text-xs font-bold tracking-wider text-navy-muted uppercase">Or try an example case</p>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="-mx-4 mt-2 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
             {EXAMPLE_CASES.map((c) => (
               <button
                 key={c.id}
-                className="rounded-full bg-white/10 px-3 py-1.5 text-left text-sm font-medium text-white ring-1 ring-white/15 backdrop-blur transition hover:bg-white/20"
+                className="shrink-0 rounded-full bg-white/10 px-3 py-1.5 text-left text-sm font-medium whitespace-nowrap text-white ring-1 ring-white/15 backdrop-blur transition hover:bg-white/20 sm:shrink sm:whitespace-normal"
                 onClick={() => {
                   setFacts({ ...c.facts, moveOutDate: addDays(todayIso(), -50) });
                   setParties(EXAMPLE_PARTIES);
