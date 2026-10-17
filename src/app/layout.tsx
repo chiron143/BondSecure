@@ -4,6 +4,10 @@ import Link from "next/link";
 import { FEEDBACK_URL } from "@/lib/content/feedback";
 import { StoreProvider } from "@/lib/store";
 import "./globals.css";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Bond Secure: get your full bond back",
@@ -13,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" className={cn("h-full antialiased", "font-sans", geist.variable)}>
       <body className="flex min-h-full flex-col">
         <StoreProvider>
           <div className="bg-navy text-navy-ink">
@@ -31,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </header>
           </div>
           <main className="flex-1">{children}</main>
-          <footer className="mx-auto w-full max-w-5xl px-4 py-10 text-xs text-muted sm:px-6">
+          <footer className="mx-auto w-full max-w-5xl px-4 py-10 text-xs text-muted-foreground sm:px-6">
             Legal information for NSW renters, not legal advice. Bond Secure doesn&apos;t file anything for you and doesn&apos;t
             keep your documents. <Link href="/privacy" className="underline">How your data is handled</Link> ·{" "}
             <Link href="/how-it-decides" className="underline">How it decides</Link> ·{" "}

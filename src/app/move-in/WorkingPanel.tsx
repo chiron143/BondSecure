@@ -29,15 +29,15 @@ export default function WorkingPanel({ status, startedAt }: { status: string; st
     <div className="rounded-xl border border-line bg-paper p-4" role="status" aria-live="polite">
       <div className="flex items-center justify-between gap-2">
         <p className="font-semibold">Making your report</p>
-        <span className="font-mono text-sm text-muted">{elapsed}</span>
+        <span className="font-mono text-sm text-muted-foreground">{elapsed}</span>
       </div>
       <ol className="mt-3 space-y-2 text-sm">
         {STAGES.map((s, i) => (
-          <li key={s.match} className={`flex items-center gap-2 ${i > current ? "text-muted" : ""}`}>
+          <li key={s.match} className={`flex items-center gap-2 ${i > current ? "text-muted-foreground" : ""}`}>
             {i < current ? (
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-accent" aria-hidden />
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden />
             ) : i === current ? (
-              <Loader2 className="h-4 w-4 shrink-0 animate-spin text-accent" aria-hidden />
+              <Loader2 className="h-4 w-4 shrink-0 animate-spin text-primary" aria-hidden />
             ) : (
               <Circle className="h-4 w-4 shrink-0" aria-hidden />
             )}
@@ -45,7 +45,7 @@ export default function WorkingPanel({ status, startedAt }: { status: string; st
           </li>
         ))}
       </ol>
-      <p className="mt-3 text-xs text-muted">
+      <p className="mt-3 text-xs text-muted-foreground">
         {secs > 180
           ? "Taking longer than usual: Google's AI is busy, so we're trying another model. Keep this page open."
           : "This takes a minute or two because the AI checks every second of your video carefully. Keep this page open."}

@@ -64,7 +64,7 @@ export default function AbnFinder({ tradingName, onPick }: { tradingName?: strin
 
   return (
     <div className="mt-3 rounded-xl border border-line bg-paper p-3 text-sm">
-      <p className="text-muted">Search by the name on your receipt, invoice or website, or paste their ABN.</p>
+      <p className="text-muted-foreground">Search by the name on your receipt, invoice or website, or paste their ABN.</p>
       <div className="mt-2 flex gap-2">
         <input className="field py-2 text-sm" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), search())} aria-label="Business name or ABN" />
         <button type="button" className="btn-ghost py-2 text-sm" disabled={busy || q.trim().length < 2} onClick={() => search()}>
@@ -78,7 +78,7 @@ export default function AbnFinder({ tradingName, onPick }: { tradingName?: strin
           <a className="font-semibold underline" href={abrSearchUrl(q || tradingName || "")} target="_blank" rel="noreferrer">
             Search the ABN register ↗
           </a>{" "}
-          <span className="text-muted">then copy the &quot;Entity name&quot; and ABN into the box above.</span>
+          <span className="text-muted-foreground">then copy the &quot;Entity name&quot; and ABN into the box above.</span>
         </p>
       )}
 
@@ -88,7 +88,7 @@ export default function AbnFinder({ tradingName, onPick }: { tradingName?: strin
             <li key={`${m.abn}-${m.name}`} className="flex items-center justify-between gap-3 rounded-lg border border-line bg-card p-2.5">
               <span>
                 <span className="font-semibold">{m.legalName ?? m.name}</span>
-                <span className="block text-xs text-muted">
+                <span className="block text-xs text-muted-foreground">
                   ABN {formatAbn(m.abn)} · {[m.state, m.postcode].filter(Boolean).join(" ") || "—"} · {m.active ? "active" : "cancelled"} ·{" "}
                   <a className="underline" href={abrAbnUrl(m.abn)} target="_blank" rel="noreferrer">check</a>
                 </span>
@@ -98,8 +98,8 @@ export default function AbnFinder({ tradingName, onPick }: { tradingName?: strin
           ))}
         </ul>
       )}
-      {matches && !matches.length && note && <p className="mt-3 text-muted">{note}</p>}
-      <p className="mt-2 text-xs text-muted">Pick the one that matches the company you paid. If you&apos;re not sure, leave it blank: the letter still works.</p>
+      {matches && !matches.length && note && <p className="mt-3 text-muted-foreground">{note}</p>}
+      <p className="mt-2 text-xs text-muted-foreground">Pick the one that matches the company you paid. If you&apos;re not sure, leave it blank: the letter still works.</p>
     </div>
   );
 }

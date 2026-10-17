@@ -54,10 +54,10 @@ function Choice<T extends string>({ name, opts, value, onChange }: { name: strin
   return (
     <div className="grid gap-2 sm:grid-cols-2">
       {opts.map((o) => (
-        <label key={o.v} className={`cursor-pointer rounded-xl border p-3 text-[15px] ${value === o.v ? "border-accent bg-accent-soft" : "border-line bg-card"}`}>
+        <label key={o.v} className={`cursor-pointer rounded-xl border p-3 text-[15px] ${value === o.v ? "border-primary bg-primary-soft" : "border-line bg-card"}`}>
           <input type="radio" name={name} className="sr-only" checked={value === o.v} onChange={() => onChange(o.v)} />
           <span className="font-medium">{o.label}</span>
-          {o.hint && <span className="block text-xs text-muted">{o.hint}</span>}
+          {o.hint && <span className="block text-xs text-muted-foreground">{o.hint}</span>}
         </label>
       ))}
     </div>
@@ -153,18 +153,18 @@ export default function Recover() {
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <div className="mb-6"><Stepper current={3} compact /></div>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <button className="text-sm text-muted underline" onClick={() => setShowVerdict(false)}>← Change my answers</button>
+          <button className="text-sm text-muted-foreground underline" onClick={() => setShowVerdict(false)}>← Change my answers</button>
           <label className="flex items-center gap-2 text-sm">
-            <span className="text-muted">Read this in</span>
+            <span className="text-muted-foreground">Read this in</span>
             <select className="field w-auto py-1.5 text-sm" value={lang} disabled={translating} onChange={(e) => translate(e.target.value)}>
               {LANGUAGES.map((l) => <option key={l.code} value={l.code}>{l.native}</option>)}
             </select>
           </label>
         </div>
-        {translating && <p className="mt-3 text-sm text-muted">Translating…</p>}
+        {translating && <p className="mt-3 text-sm text-muted-foreground">Translating…</p>}
         {translateError && <p className="mt-3 rounded-xl bg-warn-soft p-3 text-sm text-warn">Couldn&apos;t translate: {translateError}</p>}
         {lang !== "en" && map && (
-          <p className="mt-3 rounded-xl bg-accent-soft p-3 text-sm">
+          <p className="mt-3 rounded-xl bg-primary-soft p-3 text-sm">
             Translated by AI to help you understand. The English version is the one that counts, and your letter stays in English
             because that&apos;s what the landlord and NCAT read.{" "}
             <button className="underline" onClick={() => setLang("en")}>Show English</button>
@@ -189,12 +189,12 @@ export default function Recover() {
               </span>
             );
           })()}
-          <p className="text-sm font-semibold uppercase tracking-wider text-accent">{v.lawName ?? "Your situation"} · {v.confidence}</p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-primary">{v.lawName ?? "Your situation"} · {v.confidence}</p>
         </div>
         <h1 className="mt-2 font-display tracking-tight text-3xl font-semibold sm:text-4xl">{t(v.title)}</h1>
         <p className="mt-4 text-lg">{t(v.summary)}</p>
-        <p className="mt-4 font-display tracking-tight text-3xl font-semibold text-accent">
-          {v.amountOwed.toLocaleString("en-AU", { style: "currency", currency: "AUD" })} <span className="text-base font-normal text-muted">owed to you</span>
+        <p className="mt-4 font-display tracking-tight text-3xl font-semibold text-primary">
+          {v.amountOwed.toLocaleString("en-AU", { style: "currency", currency: "AUD" })} <span className="text-base font-normal text-muted-foreground">owed to you</span>
         </p>
 
         <HowWeDecided v={v} ex={ex} t={t} />
@@ -205,9 +205,9 @@ export default function Recover() {
             <ul className="mt-2 space-y-2 text-sm">
               {v.deadlines.map((d) => (
                 <li key={d.label}>
-                  <span className="text-muted">{t(d.label)}</span>
+                  <span className="text-muted-foreground">{t(d.label)}</span>
                   {d.dueDate && <span className="block font-semibold">{formatDate(d.dueDate)}{d.daysOverdue ? <span className="text-warn"> · {d.daysOverdue} days ago</span> : null}</span>}
-                  {d.note && <span className="block text-xs text-muted">{t(d.note)}</span>}
+                  {d.note && <span className="block text-xs text-muted-foreground">{t(d.note)}</span>}
                 </li>
               ))}
             </ul>
@@ -227,7 +227,7 @@ export default function Recover() {
 
         <div className="card mt-4">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="font-semibold">Your letter <span className="text-xs font-normal text-muted">(English, as sent)</span></h2>
+            <h2 className="font-semibold">Your letter <span className="text-xs font-normal text-muted-foreground">(English, as sent)</span></h2>
             <button className="btn-ghost py-2 text-sm" onClick={() => { navigator.clipboard.writeText(`${letter.subject}\n\n${letter.body}`); setCopied(true); }}>
               {copied ? <Check className="h-4 w-4" aria-hidden /> : <Copy className="h-4 w-4" aria-hidden />}
               {copied ? "Copied" : "Copy"}
@@ -235,7 +235,7 @@ export default function Recover() {
           </div>
           <p className="mt-3 text-sm font-semibold">Subject: {letter.subject}</p>
           <pre className="mt-2 max-h-96 overflow-auto whitespace-pre-wrap rounded-xl bg-paper p-4 font-sans text-sm">{letter.body}</pre>
-          <p className="mt-2 text-xs text-muted">Send it by email so it&apos;s dated. Add your bank details if you want them to pay by transfer.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Send it by email so it&apos;s dated. Add your bank details if you want them to pay by transfer.</p>
         </div>
 
         <div className="card mt-4">
@@ -250,7 +250,7 @@ export default function Recover() {
               ✓ Your move-in report from {formatDate(store.moveIn.moveInDate)} ({store.moveIn.items.filter((i) => i.status === "confirmed" && i.condition !== "good").length} existing problems) goes into your claim pack.
             </p>
           ) : (
-            <p className="mt-2 text-sm text-muted">No move-in report loaded. Use your own move-in and move-out photos, or upload the report below. Next time, <Link className="underline" href="/move-in">record your room on day one</Link>.</p>
+            <p className="mt-2 text-sm text-muted-foreground">No move-in report loaded. Use your own move-in and move-out photos, or upload the report below. Next time, <Link className="underline" href="/move-in">record your room on day one</Link>.</p>
           )}
         </div>
         {(!store.moveIn || !moveInFitsCase(store.moveIn, facts as CaseFacts)) && <MoveInUpload />}
@@ -273,7 +273,7 @@ export default function Recover() {
           <a className="btn-ghost" href={FEEDBACK_URL} target="_blank" rel="noopener noreferrer">Give feedback (2 min)</a>
         </div>
 
-        <div className="mt-8 rounded-2xl border border-line p-5 text-sm text-muted">
+        <div className="mt-8 rounded-2xl border border-line p-5 text-sm text-muted-foreground">
           <p className="font-semibold text-ink">Get free help first if: {v.getHelpIf.map(t).join("; ")}.</p>
           <ul className="mt-2 space-y-1">{HELP_CONTACTS.map((c) => <li key={c.name}><a className="underline" href={c.url}>{c.name}</a>: {c.detail}</li>)}</ul>
           <p className="mt-3 text-xs">{DISCLAIMER}</p>
@@ -286,28 +286,28 @@ export default function Recover() {
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
       <div className="mb-6"><Stepper current={3} compact /></div>
       <h1 className="font-display tracking-tight text-3xl font-semibold">Didn&apos;t get your bond back?</h1>
-      <p className="mt-3 text-muted">A few questions to work out which rules apply to you. Answer &quot;not sure&quot; whenever you&apos;re not sure.</p>
+      <p className="mt-3 text-muted-foreground">A few questions to work out which rules apply to you. Answer &quot;not sure&quot; whenever you&apos;re not sure.</p>
       <details className="mt-3 text-sm">
         <summary className="cursor-pointer underline">Try an example case, including tricky ones</summary>
         <div className="mt-2 grid gap-2">
           {EXAMPLE_CASES.map((c) => (
             <button
               key={c.id}
-              className="rounded-xl border border-line bg-card p-3 text-left hover:border-accent"
+              className="rounded-xl border border-line bg-card p-3 text-left hover:border-primary"
               onClick={() => {
                 setFacts({ ...c.facts, moveOutDate: addDays(todayIso(), -50) });
                 setParties(EXAMPLE_PARTIES);
                 setShowVerdict(true);
               }}
             >
-              <span className={`mr-2 rounded-full px-2 py-0.5 text-xs font-semibold ${c.kind === "typical" ? "bg-accent-soft text-accent" : "bg-warn-soft text-warn"}`}>
+              <span className={`mr-2 rounded-full px-2 py-0.5 text-xs font-semibold ${c.kind === "typical" ? "bg-primary-soft text-primary" : "bg-warn-soft text-warn"}`}>
                 {c.kind}
               </span>
               <span className="font-medium">{c.label}</span>
             </button>
           ))}
         </div>
-        <p className="mt-2 text-xs text-muted">Examples use sample names. &quot;Sample Rooms&quot; is not a real operator.</p>
+        <p className="mt-2 text-xs text-muted-foreground">Examples use sample names. &quot;Sample Rooms&quot; is not a real operator.</p>
       </details>
 
       <EvidenceReader

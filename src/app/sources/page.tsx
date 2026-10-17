@@ -7,12 +7,12 @@ export default function Sources() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
       <h1 className="font-display tracking-tight text-3xl font-semibold">Where our rules come from</h1>
-      <p className="mt-3 text-muted">{DISCLAIMER}</p>
+      <p className="mt-3 text-muted-foreground">{DISCLAIMER}</p>
       <div className="mt-6 space-y-3">
         {SOURCES.map((s) => (
           <div key={s.id} className="card">
             <p className="text-[15px]">{s.rule}</p>
-            <p className="mt-2 text-xs text-muted">
+            <p className="mt-2 text-xs text-muted-foreground">
               <a className="underline" href={s.url}>{s.source}</a> · checked {formatDate(s.checked)}
             </p>
           </div>

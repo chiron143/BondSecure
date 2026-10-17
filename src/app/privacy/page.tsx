@@ -7,7 +7,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <section className="card">
       <h2 className="font-semibold">{title}</h2>
-      <div className="mt-2 space-y-2 text-[15px] text-muted">{children}</div>
+      <div className="mt-2 space-y-2 text-[15px] text-muted-foreground">{children}</div>
     </section>
   );
 }
@@ -17,7 +17,7 @@ export default function Privacy() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
       <h1 className="font-display tracking-tight text-3xl font-semibold">How your data is handled</h1>
-      <p className="mt-3 text-muted">
+      <p className="mt-3 text-muted-foreground">
         Short version: no account, no database, and we don&apos;t keep your video or documents. Three things go to
         Google&apos;s Gemini AI so it can do its job. Everything else stays on your phone.
       </p>
@@ -78,7 +78,7 @@ export default function Privacy() {
         </Section>
       </div>
 
-      <p className="mt-6 text-sm text-muted">
+      <p className="mt-6 text-sm text-muted-foreground">
         Checked 10 October 2026. <Link className="underline" href="/sources">Where our legal rules come from</Link>
       </p>
     </div>

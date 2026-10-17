@@ -46,26 +46,26 @@ export default function HowItDecides() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
       <h1 className="flex items-center gap-2 font-display text-3xl font-bold tracking-tight">
-        <Scale className="h-7 w-7 text-accent" aria-hidden /> How Bond Secure decides
+        <Scale className="h-7 w-7 text-primary" aria-hidden /> How Bond Secure decides
       </h1>
-      <p className="mt-3 text-muted">
+      <p className="mt-3 text-muted-foreground">
         Which law applies, and whether a deadline has passed, is decided by fixed rules written in plain code, with
         automated tests. AI never makes this decision. The rules below were checked against official NSW sources on 9 and 10
         October 2026. NSW only. This is legal information, not legal advice.
       </p>
 
       <h2 className="mt-8 text-xl font-semibold">The questions, in the order we ask them</h2>
-      <p className="mt-1 text-sm text-muted">The first question that matches decides the path.</p>
+      <p className="mt-1 text-sm text-muted-foreground">The first question that matches decides the path.</p>
       <ol className="mt-4 space-y-3">
         {STEPS.map((s, i) => (
           <li key={s.q} className="card">
-            <p className="text-sm font-semibold text-accent">Step {i + 1}</p>
+            <p className="text-sm font-semibold text-primary">Step {i + 1}</p>
             <p className="mt-1 font-semibold">{s.q}</p>
             <p className="mt-1 flex gap-2 text-[15px]">
-              <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted" aria-hidden /> {s.then}
+              <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden /> {s.then}
             </p>
             {s.sources.length > 0 && (
-              <p className="mt-2 text-xs text-muted">
+              <p className="mt-2 text-xs text-muted-foreground">
                 Source:{" "}
                 {s.sources.map((id, n) => (
                   <span key={id}>
@@ -80,14 +80,14 @@ export default function HowItDecides() {
       </ol>
 
       <h2 className="mt-10 text-xl font-semibold">When you&apos;re not sure</h2>
-      <p className="mt-2 text-[15px] text-muted">
+      <p className="mt-2 text-[15px] text-muted-foreground">
         Every question has a &quot;not sure&quot; answer. When you use it, we run the rules again with each possible answer
         and show you where that would lead. If the answer could change, or the rules can&apos;t place you safely, we tell you
         to call a free legal service (Redfern Legal Centre, (02) 9698 7277) before you send anything.
       </p>
 
       <h2 className="mt-10 text-xl font-semibold">Worked examples</h2>
-      <p className="mt-1 text-sm text-muted">
+      <p className="mt-1 text-sm text-muted-foreground">
         Each result below is produced by running the rules on this page, not written by hand. Sample names only.
       </p>
       <div className="mt-4 space-y-3">
@@ -98,35 +98,35 @@ export default function HowItDecides() {
           return (
             <div key={c.id} className="card">
               <div className="flex flex-wrap items-center gap-2">
-                <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${c.kind === "typical" ? "bg-accent-soft text-accent" : "bg-warn-soft text-warn"}`}>
+                <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${c.kind === "typical" ? "bg-primary-soft text-primary" : "bg-warn-soft text-warn"}`}>
                   {c.kind}
                 </span>
                 <span className="font-semibold">{c.label}</span>
               </div>
               <p className="mt-2 text-[15px]">
-                <span className="text-muted">Result: </span>
+                <span className="text-muted-foreground">Result: </span>
                 <span className="font-semibold">{PATH_LABEL[r.path]}</span>
               </p>
               <p className="mt-1 flex items-center gap-1.5 text-sm">
                 {ex.checkWithAService ? (
                   <><AlertTriangle className="h-4 w-4 text-warn" aria-hidden /> <span className="text-warn">Not certain: tells you to get free advice first</span></>
                 ) : (
-                  <><CheckCircle2 className="h-4 w-4 text-accent" aria-hidden /> <span className="text-accent">Clear from the answers</span></>
+                  <><CheckCircle2 className="h-4 w-4 text-primary" aria-hidden /> <span className="text-primary">Clear from the answers</span></>
                 )}
               </p>
               {ex.whatIfs.length > 0 && (
-                <ul className="mt-2 text-sm text-muted">
+                <ul className="mt-2 text-sm text-muted-foreground">
                   {ex.whatIfs.map((w) => <li key={w.path}>{w.condition} → {PATH_LABEL[w.path]}</li>)}
                 </ul>
               )}
-              <p className="mt-2 text-sm text-muted">Why it matters: {c.lesson}</p>
+              <p className="mt-2 text-sm text-muted-foreground">Why it matters: {c.lesson}</p>
             </div>
           );
         })}
       </div>
 
       <h2 className="mt-10 text-xl font-semibold">Known limits</h2>
-      <ul className="mt-2 list-disc space-y-1 pl-5 text-[15px] text-muted">
+      <ul className="mt-2 list-disc space-y-1 pl-5 text-[15px] text-muted-foreground">
         <li>Business-day deadlines skip weekends but not public holidays, so we say &quot;about&quot; and the real date can be a day or two later.</li>
         <li>Renting from another tenant may really be a sub-tenancy under the Residential Tenancies Act; we flag it as uncertain.</li>
         <li>The boarding-house test relies on your estimate of how many people live there.</li>

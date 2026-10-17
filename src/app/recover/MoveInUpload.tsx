@@ -44,7 +44,7 @@ export default function MoveInUpload({ onLoaded }: { onLoaded?: (r: MoveInReport
           {m.demo && <span className="text-warn"> (demo report)</span>}
         </p>
       ) : (
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-1 text-sm text-muted-foreground">
           Made one when you moved in? Upload the PDF and the photos of damage that was already there go into your claim pack.
           No report? You can still continue, and use your own photos.{" "}
           <Link className="underline" href="/move-in">What&apos;s a move-in report?</Link>
@@ -55,7 +55,7 @@ export default function MoveInUpload({ onLoaded }: { onLoaded?: (r: MoveInReport
         <input type="file" accept="application/pdf,.pdf" className="sr-only" onChange={(e) => { load(e.target.files?.[0]); e.target.value = ""; }} />
       </label>
       {error && <p className="mt-2 rounded-xl bg-warn-soft p-3 text-sm text-warn">{error}</p>}
-      <p className="mt-2 text-xs text-muted">The PDF is read on your phone. It isn&apos;t uploaded anywhere.</p>
+      <p className="mt-2 text-xs text-muted-foreground">The PDF is read on your phone. It isn&apos;t uploaded anywhere.</p>
     </div>
   );
 }

@@ -21,22 +21,22 @@ export default function Stepper({ current, compact = false }: { current?: 1 | 2 
             key={title}
             aria-current={active ? "step" : undefined}
             className={`flex items-center gap-3 rounded-xl border p-3 ${
-              active ? "border-accent bg-accent-soft" : done ? "border-line bg-card" : "border-line bg-card/60"
+              active ? "border-primary bg-primary-soft" : done ? "border-line bg-card" : "border-line bg-card/60"
             }`}
           >
             <span
               className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg ${
-                done || active ? "bg-accent text-accent-ink" : "bg-paper text-muted"
+                done || active ? "bg-primary text-primary-foreground" : "bg-paper text-muted-foreground"
               }`}
             >
               {done ? <Check className="h-5 w-5" aria-hidden /> : <Icon className="h-5 w-5" aria-hidden />}
             </span>
             <span className="min-w-0">
-              <span className={`block text-xs font-semibold uppercase tracking-wider ${active ? "text-accent" : "text-muted"}`}>
+              <span className={`block text-xs font-semibold uppercase tracking-wider ${active ? "text-primary" : "text-muted-foreground"}`}>
                 Step {n}{done && !compact ? " · done" : ""}
               </span>
               <span className={`block font-semibold leading-tight ${compact ? "hidden text-sm sm:block" : ""}`}>{title}</span>
-              {!compact && <span className="block text-sm text-muted">{detail}</span>}
+              {!compact && <span className="block text-sm text-muted-foreground">{detail}</span>}
             </span>
           </li>
         );

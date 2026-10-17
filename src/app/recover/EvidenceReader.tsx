@@ -64,9 +64,9 @@ export default function EvidenceReader({
   }
 
   return (
-    <div className="card mt-6 border-accent/40 bg-accent-soft/40">
+    <div className="card mt-6 border-primary/40 bg-primary-soft/40">
       <p className="font-semibold">Have receipts, emails or your agreement? Let AI fill this in.</p>
-      <p className="mt-1 text-sm text-muted">
+      <p className="mt-1 text-sm text-muted-foreground">
         Add screenshots or photos of your payment receipt, your agreement or terms, and their emails. We&apos;ll read the
         amounts, dates and names, show you exactly where we found each one, and you choose what to use. We don&apos;t keep your
         files. <Link className="underline" href="/privacy">How your data is handled</Link>
@@ -95,7 +95,7 @@ export default function EvidenceReader({
             <p className="mb-3 rounded-xl bg-warn-soft p-3 text-sm text-warn">Demo mode: these are example findings, not read from your files.</p>
           )}
           {result.findings.length === 0 ? (
-            <p className="text-sm text-muted">We couldn&apos;t find amounts, dates or names in those files. Fill in the form below yourself.</p>
+            <p className="text-sm text-muted-foreground">We couldn&apos;t find amounts, dates or names in those files. Fill in the form below yourself.</p>
           ) : (
             <>
               <p className="text-sm font-semibold">What we found. Untick anything that&apos;s wrong.</p>
@@ -103,11 +103,11 @@ export default function EvidenceReader({
                 {result.findings.map((f, n) => (
                   <li key={`${f.field}-${n}`}>
                     <label className="flex cursor-pointer gap-3 rounded-xl border border-line bg-card p-3 text-sm">
-                      <input type="checkbox" className="mt-1 accent-[var(--accent)]" checked={use[n] ?? false} onChange={(e) => setUse((u) => u.map((x, i) => (i === n ? e.target.checked : x)))} />
+                      <input type="checkbox" className="mt-1 accent-[var(--primary)]" checked={use[n] ?? false} onChange={(e) => setUse((u) => u.map((x, i) => (i === n ? e.target.checked : x)))} />
                       <span>
-                        <span className="text-muted">{FIELD_LABEL[f.field] ?? f.field}: </span>
+                        <span className="text-muted-foreground">{FIELD_LABEL[f.field] ?? f.field}: </span>
                         <span className="font-semibold">{show(f)}</span>
-                        <span className="block text-xs text-muted">&ldquo;{f.quote}&rdquo; · {f.document}</span>
+                        <span className="block text-xs text-muted-foreground">&ldquo;{f.quote}&rdquo; · {f.document}</span>
                       </span>
                     </label>
                   </li>

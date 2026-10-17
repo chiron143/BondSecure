@@ -141,22 +141,22 @@ export default function MoveIn() {
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         <div className="mb-6"><Stepper current={1} compact /></div>
         <h1 className="font-display tracking-tight text-3xl font-semibold">Record your room on move-in day</h1>
-        <div className="mt-4 rounded-2xl border border-accent/40 bg-accent-soft p-4">
+        <div className="mt-4 rounded-2xl border border-primary/40 bg-primary-soft p-4">
           <p className="font-semibold">Before you film</p>
           <ul className="mt-2 space-y-2 text-[15px]">
             <li className="flex gap-2">
-              <Mic className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden />
+              <Mic className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
               <span>
                 <strong>Talk while you film.</strong> Say what you see: &quot;chip on the desk corner&quot;, &quot;fan
                 doesn&apos;t work&quot;. The AI listens, and it catches things a picture can&apos;t show.
               </span>
             </li>
             <li className="flex gap-2">
-              <ScanSearch className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden />
+              <ScanSearch className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
               <span><strong>Get close to every mark</strong> and hold still for a second or two.</span>
             </li>
             <li className="flex gap-2">
-              <Lightbulb className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden />
+              <Lightbulb className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
               <span><strong>Turn the lights on</strong> and walk slowly. About 2 minutes per room is plenty.</span>
             </li>
           </ul>
@@ -180,7 +180,7 @@ export default function MoveIn() {
           <div>
             <label className="label" htmlFor="video">Your walk-through video</label>
             <input id="video" type="file" accept="video/*" className="field" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-            <p className="mt-1.5 text-xs text-muted">
+            <p className="mt-1.5 text-xs text-muted-foreground">
               Film it now or pick a video you already took. MP4 or MOV. Google&apos;s Gemini AI analyses it and we delete it
               straight after. <Link className="underline" href="/privacy">How your data is handled</Link>
             </p>
@@ -207,7 +207,7 @@ export default function MoveIn() {
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         <div className="mb-6"><Stepper current={2} compact /></div>
         <h1 className="font-display tracking-tight text-3xl font-semibold">Check every line</h1>
-        <p className="mt-3 text-muted">
+        <p className="mt-3 text-muted-foreground">
           This report is your evidence, so you have to stand behind it. Fix anything that&apos;s wrong, remove anything that
           isn&apos;t there, then confirm.
         </p>
@@ -215,7 +215,7 @@ export default function MoveIn() {
           <p className="mt-4 rounded-xl bg-warn-soft p-3 text-sm text-warn">Demo mode: these findings are examples, not an analysis of your video. The stills are from your video.</p>
         )}
         {refilm.length > 0 && (
-          <div className="mt-4 rounded-xl bg-accent-soft p-4 text-sm">
+          <div className="mt-4 rounded-xl bg-primary-soft p-4 text-sm">
             <p className="font-semibold">Worth filming again:</p>
             <ul className="mt-1 list-disc pl-5">{refilm.map((r) => <li key={r}>{r}</li>)}</ul>
           </div>
@@ -235,10 +235,10 @@ export default function MoveIn() {
                       {(Object.keys(CONDITION_LABEL) as Condition[]).map((c) => <option key={c} value={c}>{CONDITION_LABEL[c]}</option>)}
                     </select>
                     <textarea className="field py-2 text-sm" rows={2} value={i.note} onChange={(e) => update(i.id, { note: e.target.value })} />
-                    <div className="flex items-center justify-between text-xs text-muted">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span>{formatTimestamp(i.t)} · {i.confidence} confidence</span>
                       <span className="flex gap-2">
-                        <button className={`rounded-full px-3 py-1.5 font-semibold ${i.status === "confirmed" ? "bg-accent text-accent-ink" : "border border-line"}`} onClick={() => update(i.id, { status: "confirmed" })}>
+                        <button className={`rounded-full px-3 py-1.5 font-semibold ${i.status === "confirmed" ? "bg-primary text-primary-foreground" : "border border-line"}`} onClick={() => update(i.id, { status: "confirmed" })}>
                           {i.status === "confirmed" ? "Confirmed" : "Confirm"}
                         </button>
                         <button className="rounded-full border border-line px-3 py-1.5" onClick={() => update(i.id, { status: i.status === "removed" ? "pending" : "removed" })}>
@@ -254,7 +254,7 @@ export default function MoveIn() {
         ))}
 
         <div className="sticky bottom-4 mt-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-card p-4 shadow-lg">
-          <span className="text-sm text-muted">{pending ? `${pending} still to check` : "All checked"}</span>
+          <span className="text-sm text-muted-foreground">{pending ? `${pending} still to check` : "All checked"}</span>
           <span className="flex gap-2">
             {pending > 0 && (
               <button className="btn-ghost" onClick={() => setReport({ ...report, items: report.items.map((i) => (i.status === "pending" ? { ...i, status: "confirmed" } : i)) })}>

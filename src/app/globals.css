@@ -1,60 +1,145 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-/* Bond Secure palette: cool slate surfaces, dark slate for structure, emerald for "go" actions.
+@custom-variant dark (@media (prefers-color-scheme: dark));
+
+/* Bond Secure palette, in shadcn's token names so every component picks it up.
+   Slate surfaces, dark slate for structure, emerald (primary) for "go" actions.
    Text colours hold at least 4.5:1 contrast on their backgrounds in both themes. */
 :root {
-  --paper: #f1f5f9; /* slate-100 */
+  --background: #f1f5f9; /* page, slate-100 */
+  --foreground: #0f172a; /* slate-900 */
   --card: #ffffff;
-  --ink: #0f172a; /* slate-900 */
-  --muted: #475569; /* slate-600 */
-  --line: #e2e8f0; /* slate-200 */
-  --accent: #047857; /* emerald-700 */
-  --accent-ink: #ffffff;
-  --accent-soft: #ecfdf5; /* emerald-50 */
-  --warn: #b91c1c; /* red-700 */
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #047857; /* emerald-700 */
+  --primary-foreground: #ffffff;
+  --primary-soft: #ecfdf5; /* emerald-50 */
+  --secondary: #e2e8f0;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569; /* slate-600 */
+  --accent: #f1f5f9; /* hover surfaces */
+  --accent-foreground: #0f172a;
+  --destructive: #b91c1c; /* red-700 */
+  --border: #e2e8f0;
+  --input: #cbd5e1;
+  --ring: #059669;
+  --radius: 0.875rem;
+  /* Bond Secure extras */
+  --paper: var(--background);
+  --ink: var(--foreground);
+  --line: var(--border);
+  --warn: #b91c1c;
   --warn-soft: #fef2f2;
   --navy: #0f172a; /* hero and structure */
   --navy-ink: #e2e8f0;
   --navy-muted: #94a3b8;
   --navy-line: #1e293b;
+  --chart-1: #10b981;
+  --chart-2: #3b82f6;
+  --chart-3: #f59e0b;
+  --chart-4: #8b5cf6;
+  --chart-5: #ef4444;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #047857;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #059669;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #020617;
+    --background: #020617;
+    --foreground: #e2e8f0;
     --card: #0f172a;
-    --ink: #e2e8f0;
-    --muted: #94a3b8;
-    --line: #1e293b;
-    --accent: #34d399;
-    --accent-ink: #022c22;
-    --accent-soft: #052e25;
+    --card-foreground: #e2e8f0;
+    --popover: #0f172a;
+    --popover-foreground: #e2e8f0;
+    --primary: #34d399;
+    --primary-foreground: #022c22;
+    --primary-soft: #052e25;
+    --secondary: #1e293b;
+    --secondary-foreground: #e2e8f0;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+    --accent: #1e293b;
+    --accent-foreground: #e2e8f0;
+    --destructive: #f87171;
+    --border: #1e293b;
+    --input: #334155;
+    --ring: #34d399;
     --warn: #f87171;
     --warn-soft: #2a0f12;
     --navy: #0b1222;
-    --navy-ink: #e2e8f0;
-    --navy-muted: #94a3b8;
-    --navy-line: #1e293b;
+    --sidebar: #0f172a;
+    --sidebar-foreground: #e2e8f0;
+    --sidebar-primary: #34d399;
+    --sidebar-primary-foreground: #022c22;
+    --sidebar-accent: #1e293b;
+    --sidebar-accent-foreground: #e2e8f0;
+    --sidebar-border: #1e293b;
+    --sidebar-ring: #34d399;
   }
 }
 
 @theme inline {
   --color-paper: var(--paper);
+  --color-primary-soft: var(--primary-soft);
   --color-card: var(--card);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-accent: var(--accent);
-  --color-accent-ink: var(--accent-ink);
-  --color-accent-soft: var(--accent-soft);
   --color-warn: var(--warn);
   --color-warn-soft: var(--warn-soft);
   --color-navy: var(--navy);
   --color-navy-ink: var(--navy-ink);
   --color-navy-muted: var(--navy-muted);
   --color-navy-line: var(--navy-line);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-sans);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 body {
@@ -67,17 +152,32 @@ body {
   @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-[15px] font-semibold transition disabled:opacity-50;
 }
 @utility btn-primary {
-  @apply btn bg-accent text-accent-ink hover:opacity-90;
+  @apply btn bg-primary text-primary-foreground hover:opacity-90;
 }
 @utility btn-ghost {
-  @apply btn border border-line bg-card text-ink hover:border-accent;
+  @apply btn border border-line bg-card text-ink hover:border-primary;
 }
 @utility field {
-  @apply w-full rounded-xl border border-line bg-card px-4 py-3 text-[15px] outline-none focus:border-accent;
+  @apply w-full rounded-xl border border-line bg-card px-4 py-3 text-[15px] outline-none focus:border-primary;
 }
 @utility label {
   @apply mb-1.5 block text-sm font-semibold;
 }
 @utility card {
   @apply rounded-2xl border border-line bg-card p-5 shadow-sm sm:p-6;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  html {
+    @apply font-sans;
+  }
 }

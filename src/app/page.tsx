@@ -108,13 +108,13 @@ export default function Home() {
               { Icon: Send, t: "Send the demand", d: "A formal letter, a claim pack and an NCAT kit if they still don't pay." },
             ].map(({ Icon, t, d }, i) => (
               <li key={t} className="flex items-center gap-3 rounded-xl border border-line p-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent text-accent-ink">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground">
                   <Icon className="h-5 w-5" aria-hidden />
                 </span>
                 <span>
-                  <span className="block text-xs font-semibold uppercase tracking-wider text-accent">Step {i + 1}</span>
+                  <span className="block text-xs font-semibold uppercase tracking-wider text-primary">Step {i + 1}</span>
                   <span className="block font-semibold leading-tight">{t}</span>
-                  <span className="block text-sm text-muted">{d}</span>
+                  <span className="block text-sm text-muted-foreground">{d}</span>
                 </span>
               </li>
             ))}
@@ -132,7 +132,7 @@ export default function Home() {
             {/* First: the legal position, the headline job */}
             <div className="card flex flex-col">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="flex items-center gap-2 text-sm font-semibold text-muted">
+                <p className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
                   <Landmark className="h-4 w-4" aria-hidden /> Your legal position
                 </p>
                 <span className="rounded-full bg-warn-soft px-2.5 py-0.5 text-xs font-semibold text-warn">Sample case</span>
@@ -145,11 +145,11 @@ export default function Home() {
               </div>
               <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
                 <div className="rounded-xl bg-paper p-3">
-                  <dt className="flex items-center gap-1.5 text-muted"><CalendarClock className="h-4 w-4" aria-hidden /> Due back</dt>
+                  <dt className="flex items-center gap-1.5 text-muted-foreground"><CalendarClock className="h-4 w-4" aria-hidden /> Due back</dt>
                   <dd className="mt-0.5 font-semibold">3 September 2026</dd>
                 </div>
                 <div className="rounded-xl bg-paper p-3">
-                  <dt className="flex items-center gap-1.5 text-muted"><Scale className="h-4 w-4" aria-hidden /> Law</dt>
+                  <dt className="flex items-center gap-1.5 text-muted-foreground"><Scale className="h-4 w-4" aria-hidden /> Law</dt>
                   <dd className="mt-0.5 font-semibold">
                     <a className="underline" href={boardingSource.url}>Boarding Houses Act 2012</a>
                   </dd>
@@ -161,7 +161,7 @@ export default function Home() {
                   <span className="text-sm font-semibold">Demand letter</span>
                   <CopyButton text={EXAMPLE_LETTER} />
                 </div>
-                <pre className="max-h-48 overflow-auto whitespace-pre-wrap p-3 font-sans text-sm text-muted">{EXAMPLE_LETTER}</pre>
+                <pre className="max-h-48 overflow-auto whitespace-pre-wrap p-3 font-sans text-sm text-muted-foreground">{EXAMPLE_LETTER}</pre>
               </div>
               <Link href="/recover" className="btn-primary mt-4">
                 <Download className="h-5 w-5" aria-hidden /> Make my own claim pack
@@ -170,10 +170,10 @@ export default function Home() {
             {/* Second: move-in evidence makes the claim stronger */}
             <div className="card">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="flex items-center gap-2 text-sm font-semibold text-muted">
+                <p className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
                   <Film className="h-4 w-4" aria-hidden /> Even stronger: proof from move-in day
                 </p>
-                <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent">Real AI run</span>
+                <span className="rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-semibold text-primary">Real AI run</span>
               </div>
               <ol className="mt-4 space-y-4">
                 {REAL_FINDINGS.map((f) => (
@@ -187,15 +187,15 @@ export default function Home() {
                     />
                     <div className="min-w-0 text-sm">
                       <p className="font-semibold">
-                        <span className="font-mono text-accent">{f.t}</span> · {f.item}
+                        <span className="font-mono text-primary">{f.t}</span> · {f.item}
                       </p>
-                      <p className="text-muted">{f.note}</p>
+                      <p className="text-muted-foreground">{f.note}</p>
                       <span className="mt-1 inline-block rounded-full bg-warn-soft px-2 py-0.5 text-xs font-semibold text-warn">Damaged</span>
                     </div>
                   </li>
                 ))}
               </ol>
-              <p className="mt-4 text-xs text-muted">
+              <p className="mt-4 text-xs text-muted-foreground">
                 From our founder&apos;s own 56-second iPhone video of their room: the AI found every mark pointed out on camera, and each
                 still is from that video at that second. You confirm every line before the PDF is made.
               </p>
@@ -242,19 +242,19 @@ export default function Home() {
               },
             ].map((x) => (
               <div key={x.n} className="card">
-                <p className="font-display text-5xl font-bold tracking-tight text-accent">{x.n}</p>
+                <p className="font-display text-5xl font-bold tracking-tight text-primary">{x.n}</p>
                 <p className="mt-3 text-[15px]">{x.d}</p>
-                <p className="mt-2 text-xs text-muted">{x.s}</p>
+                <p className="mt-2 text-xs text-muted-foreground">{x.s}</p>
               </div>
             ))}
           </div>
-          <p className="mt-3 text-sm text-muted">
+          <p className="mt-3 text-sm text-muted-foreground">
             Earlier research found international students often have no receipt, no written agreement and no record of the
             room&apos;s condition.{" "}
             <Link href="/sources" className="underline">Sources</Link>
           </p>
           {VOICES.length > 0 && (
-            <p className="mt-8 text-sm font-semibold uppercase tracking-wider text-accent">
+            <p className="mt-8 text-sm font-semibold uppercase tracking-wider text-primary">
               From the 4 international students who tested it this weekend
             </p>
           )}
@@ -263,7 +263,7 @@ export default function Home() {
               {VOICES.map((v) => (
                 <figure key={v.quote} className="card">
                   <blockquote className="text-lg">&ldquo;{v.quote}&rdquo;</blockquote>
-                  <figcaption className="mt-2 text-sm text-muted">{v.who}</figcaption>
+                  <figcaption className="mt-2 text-sm text-muted-foreground">{v.who}</figcaption>
                 </figure>
               ))}
             </div>
@@ -273,7 +273,7 @@ export default function Home() {
         <section className="grid gap-4 pb-12 md:grid-cols-2">
           <div className="card">
             <h2 className="text-lg font-semibold">Built for how students actually rent</h2>
-            <p className="mt-2 text-[15px] text-muted">
+            <p className="mt-2 text-[15px] text-muted-foreground">
               Paid your deposit to a building manager? Living in student accommodation run by a company? Bond never lodged
               with Fair Trading? Those are the cases other tools skip, and the ones we start with. Your result can be
               explained in Chinese, Hindi, Nepali, Vietnamese and 8 more languages.
@@ -281,7 +281,7 @@ export default function Home() {
           </div>
           <div className="card">
             <h2 className="text-lg font-semibold">Honest about what it is</h2>
-            <p className="mt-2 text-[15px] text-muted">
+            <p className="mt-2 text-[15px] text-muted-foreground">
               Legal information, not legal advice. Which law applies and every deadline are worked out by tested rules, not
               AI, and each rule links to its official source. When your situation is unclear, we tell you to call a free
               legal service instead of guessing. <Link href="/how-it-decides" className="underline">See how it decides</Link>, including
