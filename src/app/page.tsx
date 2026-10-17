@@ -85,7 +85,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.15fr_1fr]">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.45fr_1fr]">
           <div>
             <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold tracking-wider uppercase backdrop-blur">
               <Globe className="h-3.5 w-3.5 text-emerald-400" aria-hidden />
@@ -93,13 +93,13 @@ export default function Home() {
                 For international students renting in NSW
               </AnimatedShinyText>
             </p>
-            <h1 className="mt-6 font-display text-4xl leading-[1.05] font-bold tracking-tight text-balance text-white sm:text-5xl xl:text-[3.5rem]">
+            <h1 className="mt-6 font-display text-[2.6rem] leading-[1.02] font-black tracking-tighter text-balance text-white sm:text-6xl xl:text-[4.1rem]">
               Bond not back? Find out which law they&apos;ve broken, and{" "}
               <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-sky-300 bg-clip-text text-transparent">
                 demand it back today.
               </span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg text-navy-muted">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-navy-muted sm:text-xl">
               Answer a few plain questions, or drop in your receipt and their emails. Tested NSW rules tell you which law applies
               and exactly how many days late they are. You get a formal demand letter and a claim pack with your evidence,
               explained in your language.
@@ -159,7 +159,7 @@ export default function Home() {
                 </span>
                 <span>
                   <span className="block text-xs font-semibold uppercase tracking-wider text-primary">Step {i + 1}</span>
-                  <span className="block font-semibold leading-tight">{t}</span>
+                  <span className="block text-base leading-tight font-extrabold">{t}</span>
                   <span className="block text-sm text-muted-foreground">{d}</span>
                 </span>
               </li>
@@ -172,7 +172,7 @@ export default function Home() {
         <section className="py-16">
           <Reveal>
             <p className="text-sm font-semibold tracking-wider text-primary uppercase">What you get</p>
-            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl">
+            <h2 className="mt-2 font-display text-4xl font-black tracking-tighter text-balance sm:text-5xl">
               A demand that cites the law, and proof from day one.
             </h2>
           </Reveal>
@@ -270,7 +270,7 @@ export default function Home() {
           </div>
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-emerald-400">Moving into a new room?</p>
-            <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">Make sure this never happens again.</h2>
+            <h2 className="mt-2 font-display text-3xl font-black tracking-tighter text-white sm:text-5xl">Make sure this never happens again.</h2>
             <p className="mt-3 text-navy-muted">
               Film a 2-minute walk-through on day one and say what you see. AI lists every mark with the second it appears and a
               still from your video. Keep the PDF: if your bond isn&apos;t returned, upload it here and it goes straight into your
@@ -287,7 +287,7 @@ export default function Home() {
         <section className="pb-16">
           <Reveal>
             <p className="text-sm font-semibold tracking-wider text-primary uppercase">The problem</p>
-            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl">This happens to international students all the time</h2>
+            <h2 className="mt-2 font-display text-4xl font-black tracking-tighter text-balance sm:text-5xl">This happens to international students all the time</h2>
           </Reveal>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {[
@@ -312,7 +312,7 @@ export default function Home() {
             ].map((x, i) => (
               <Reveal key={x.k} delay={i * 0.08} className="flex">
                 <div className="card w-full transition duration-300 hover:-translate-y-1 hover:shadow-lg">
-                  <p className="font-display text-5xl font-bold tracking-tight text-primary">{x.n}</p>
+                  <p className="font-display text-6xl font-black tracking-tighter text-primary">{x.n}</p>
                   <p className="mt-3 text-[15px]">{x.d}</p>
                   <p className="mt-2 text-xs text-muted-foreground">{x.s}</p>
                 </div>
@@ -333,7 +333,7 @@ export default function Home() {
               <Reveal key={x.d} delay={i * 0.08} className="flex">
                 <div className="relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-800 p-6 text-white shadow-lg shadow-emerald-900/20">
                   <div className="pointer-events-none absolute -top-10 -right-10 size-32 rounded-full bg-white/10 blur-2xl" aria-hidden />
-                  <p className="font-display text-5xl font-bold tracking-tight">
+                  <p className="font-display text-6xl font-black tracking-tighter">
                     <NumberTicker value={x.value} decimalPlaces={x.decimals} className="text-white" />
                     {x.suffix}
                   </p>
