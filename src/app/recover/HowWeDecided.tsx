@@ -12,9 +12,9 @@ import type { Verdict } from "@/lib/rules/types";
 export default function HowWeDecided({ v, ex, t }: { v: Verdict; ex: Explanation; t: (s: string) => string }) {
   const sure = v.confidence === "likely" && ex.whatIfs.length === 0 && v.path !== "REFER";
   return (
-    <section className="card mt-6">
+    <section className="rounded-3xl border border-border bg-card p-6 shadow-xl shadow-slate-900/5">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="flex items-center gap-2 font-semibold">
+        <h2 className="flex items-center gap-2 font-display text-xl font-extrabold tracking-tight">
           <Scale className="h-5 w-5 text-primary" aria-hidden /> How we decided
         </h2>
         {sure ? (

@@ -199,7 +199,7 @@ export default function EvidenceReader({
   const picked = use.filter(Boolean).length;
 
   return (
-    <div className="card relative mt-6 overflow-hidden border-primary/40">
+    <div className="card relative overflow-hidden border-primary/40">
       <div className="pointer-events-none absolute -top-24 -right-24 size-64 rounded-full bg-primary/10 blur-3xl" aria-hidden />
       <p className="flex items-center gap-2 font-semibold">
         <Sparkles className="size-4 text-primary" aria-hidden /> Have receipts, emails or your agreement? Let AI fill this in.
