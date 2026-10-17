@@ -17,7 +17,10 @@ import Image from "next/image";
 import Link from "next/link";
 import CopyButton from "@/components/CopyButton";
 import HeroPhone from "@/components/home/HeroPhone";
+import Reveal from "@/components/Reveal";
 import ShimmerLink from "@/components/ShimmerLink";
+import { BorderBeam } from "@/components/ui/border-beam";
+import { NumberTicker } from "@/components/ui/number-ticker";
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { GridPattern } from "@/components/ui/grid-pattern";
 import { aiPrivacyLine, isPaidTier } from "@/lib/content/privacy";
@@ -54,6 +57,13 @@ I paid a security deposit of $802.00 on 2 February 2026 for my room at Room 12, 
 Under the occupancy principles in the Boarding Houses Act 2012 (NSW), a security deposit must be refunded within 14 days after the resident leaves, less only permitted deductions. That date was 3 September 2026, which is now 36 days ago.
 
 I request that you refund $802.00 to me in full by 16 October 2026…`;
+
+// From the tester feedback form (4 international students, 10-11 Oct 2026).
+const TESTER_RESULTS = [
+  { value: 4, decimals: 0, suffix: "/4", d: "said the move-in report found every mark they pointed at" },
+  { value: 4, decimals: 0, suffix: "/4", d: "would send the demand letter it wrote" },
+  { value: 9.75, decimals: 2, suffix: "", d: "out of 10 for \u201cit worked, and I\u2019d trust what it told me\u201d" },
+];
 
 const boardingSource = SOURCES.find((s) => s.id === "boarding-deposit")!;
 
@@ -127,17 +137,24 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Steps: the headline job */}
-        <section className="-mt-6 rounded-2xl border border-line bg-card p-3 shadow-sm sm:p-4">
+        <Reveal>
+        <section className="relative -mt-8 rounded-2xl border border-line bg-card/90 p-3 shadow-xl shadow-slate-900/5 backdrop-blur sm:p-4">
           <ol className="grid gap-3 sm:grid-cols-3">
             {[
               { Icon: ListChecks, t: "Answer a few questions", d: "Or let AI read your receipt and emails. You confirm every answer." },
               { Icon: Scale, t: "See where you stand", d: "Which law, the legal deadline and how late they are, with sources." },
               { Icon: Send, t: "Send the demand", d: "A formal letter, a claim pack and an NCAT kit if they still don't pay." },
             ].map(({ Icon, t, d }, i) => (
-              <li key={t} className="flex items-center gap-3 rounded-xl border border-line p-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground">
+              <li
+                key={t}
+                className="group relative flex items-center gap-3 overflow-hidden rounded-xl border border-line p-3 transition duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg"
+              >
+                <span className="pointer-events-none absolute -right-2 -bottom-6 font-display text-7xl font-black text-primary/5 transition group-hover:text-primary/10" aria-hidden>
+                  {i + 1}
+                </span>
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 text-white shadow-md shadow-emerald-700/30">
                   <Icon className="h-5 w-5" aria-hidden />
                 </span>
                 <span>
@@ -149,17 +166,22 @@ export default function Home() {
             ))}
           </ol>
         </section>
+        </Reveal>
 
         {/* Workspace example */}
-        <section className="py-12">
-          <div className="flex flex-wrap items-end justify-between gap-2">
-            <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">What you get</h2>
+        <section className="py-16">
+          <Reveal>
+            <p className="text-sm font-semibold tracking-wider text-primary uppercase">What you get</p>
+            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl">
+              A demand that cites the law, and proof from day one.
+            </h2>
+          </Reveal>
 
-          </div>
-
-          <div className="mt-5 grid gap-4 lg:grid-cols-2">
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
             {/* First: the legal position, the headline job */}
-            <div className="card flex flex-col">
+            <Reveal className="flex">
+            <div className="card relative flex w-full flex-col overflow-hidden">
+              <BorderBeam size={120} duration={9} colorFrom="#10b981" colorTo="#38bdf8" />
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
                   <Landmark className="h-4 w-4" aria-hidden /> Your legal position
@@ -196,8 +218,10 @@ export default function Home() {
                 <Download className="h-5 w-5" aria-hidden /> Make my own claim pack
               </Link>
             </div>
+            </Reveal>
             {/* Second: move-in evidence makes the claim stronger */}
-            <div className="card">
+            <Reveal delay={0.1} className="flex">
+            <div className="card w-full">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
                   <Film className="h-4 w-4" aria-hidden /> Even stronger: proof from move-in day
@@ -206,14 +230,16 @@ export default function Home() {
               </div>
               <ol className="mt-4 space-y-4">
                 {REAL_FINDINGS.map((f) => (
-                  <li key={f.t} className="flex gap-3">
+                  <li key={f.t} className="group flex gap-3">
+                    <div className="h-24 w-32 shrink-0 overflow-hidden rounded-lg ring-1 ring-line">
                     <Image
                       src={f.src}
                       alt={`Still from a real move-in video at ${f.t}: ${f.note}`}
                       width={480}
                       height={360}
-                      className="h-24 w-32 shrink-0 rounded-lg object-cover"
+                      className="h-24 w-32 object-cover transition duration-500 group-hover:scale-110"
                     />
+                    </div>
                     <div className="min-w-0 text-sm">
                       <p className="font-semibold">
                         <span className="font-mono text-primary">{f.t}</span> · {f.item}
@@ -229,12 +255,19 @@ export default function Home() {
                 still is from that video at that second. You confirm every line before the PDF is made.
               </p>
             </div>
+            </Reveal>
 
           </div>
         </section>
 
         {/* Follow-on: protect the next room */}
-        <section className="mb-12 grid gap-6 rounded-2xl bg-navy p-6 text-navy-ink sm:p-8 md:grid-cols-[1.4fr_1fr] md:items-center">
+        <Reveal>
+        <section className="relative isolate mb-16 grid gap-6 overflow-hidden rounded-3xl bg-navy p-6 text-navy-ink sm:p-10 md:grid-cols-[1.4fr_1fr] md:items-center">
+          <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden>
+            <div className="animate-aurora absolute -top-24 -left-24 size-80 rounded-full bg-emerald-500/25 blur-3xl" />
+            <div className="animate-aurora-slow absolute -right-20 -bottom-24 size-72 rounded-full bg-sky-500/20 blur-3xl" />
+            <GridPattern width={36} height={36} className="fill-white/[0.02] stroke-white/[0.05] [mask-image:radial-gradient(ellipse_at_center,white,transparent_75%)]" />
+          </div>
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-emerald-400">Moving into a new room?</p>
             <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">Make sure this never happens again.</h2>
@@ -244,37 +277,46 @@ export default function Home() {
               claim.
             </p>
           </div>
-          <Link href="/move-in" className="btn-primary bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
+          <ShimmerLink href="/move-in" className="justify-self-start md:justify-self-end">
             <Film className="h-5 w-5" aria-hidden /> Record my move-in report
-          </Link>
+          </ShimmerLink>
         </section>
+        </Reveal>
 
         {/* Evidence of the problem */}
-        <section className="pb-12">
-          <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">This happens to international students all the time</h2>
-          <div className="mt-5 grid gap-4 md:grid-cols-3">
+        <section className="pb-16">
+          <Reveal>
+            <p className="text-sm font-semibold tracking-wider text-primary uppercase">The problem</p>
+            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl">This happens to international students all the time</h2>
+          </Reveal>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
             {[
               {
-                n: "1 in 2",
+                n: <>1 in 2</>,
+                k: "half",
                 d: "international students rent in the private market, compared with about 1 in 3 other Australians.",
                 s: "Reserve Bank of Australia, July 2025 (survey of 70,000+ students)",
               },
               {
-                n: "6,800",
+                n: <NumberTicker value={6800} className="text-primary" />,
+                k: "6800",
                 d: "bond disputes reached the NSW tribunal in 2024: 1 in 4 private rental cases. Most tenants face it alone, without a lawyer.",
                 s: "Law and Justice Foundation of NSW, June 2025",
               },
               {
-                n: "6",
+                n: <NumberTicker value={6} className="text-primary" />,
+                k: "6",
                 d: "residents of one Sydney student building, our founder included, promised their deposit back “within 15 days” and still waiting weeks later.",
                 s: "Our own building, October 2026",
               },
-            ].map((x) => (
-              <div key={x.n} className="card">
-                <p className="font-display text-5xl font-bold tracking-tight text-primary">{x.n}</p>
-                <p className="mt-3 text-[15px]">{x.d}</p>
-                <p className="mt-2 text-xs text-muted-foreground">{x.s}</p>
-              </div>
+            ].map((x, i) => (
+              <Reveal key={x.k} delay={i * 0.08} className="flex">
+                <div className="card w-full transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+                  <p className="font-display text-5xl font-bold tracking-tight text-primary">{x.n}</p>
+                  <p className="mt-3 text-[15px]">{x.d}</p>
+                  <p className="mt-2 text-xs text-muted-foreground">{x.s}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
@@ -282,18 +324,34 @@ export default function Home() {
             room&apos;s condition.{" "}
             <Link href="/sources" className="underline">Sources</Link>
           </p>
+          {/* Tester results: 4 international students, feedback form, 10-11 Oct 2026 */}
+          <Reveal>
+            <p className="mt-14 text-sm font-semibold tracking-wider text-primary uppercase">Tested by 4 international students</p>
+          </Reveal>
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            {TESTER_RESULTS.map((x, i) => (
+              <Reveal key={x.d} delay={i * 0.08} className="flex">
+                <div className="relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-800 p-6 text-white shadow-lg shadow-emerald-900/20">
+                  <div className="pointer-events-none absolute -top-10 -right-10 size-32 rounded-full bg-white/10 blur-2xl" aria-hidden />
+                  <p className="font-display text-5xl font-bold tracking-tight">
+                    <NumberTicker value={x.value} decimalPlaces={x.decimals} className="text-white" />
+                    {x.suffix}
+                  </p>
+                  <p className="mt-2 text-[15px] text-emerald-50">{x.d}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
           {VOICES.length > 0 && (
-            <p className="mt-8 text-sm font-semibold uppercase tracking-wider text-primary">
-              From the 4 international students who tested it this weekend
-            </p>
-          )}
-          {VOICES.length > 0 && (
-            <div className="mt-3 grid gap-4 md:grid-cols-2">
-              {VOICES.map((v) => (
-                <figure key={v.quote} className="card">
-                  <blockquote className="text-lg">&ldquo;{v.quote}&rdquo;</blockquote>
-                  <figcaption className="mt-2 text-sm text-muted-foreground">{v.who}</figcaption>
-                </figure>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              {VOICES.map((v, i) => (
+                <Reveal key={v.quote} delay={i * 0.1} className="flex">
+                  <figure className="card relative w-full">
+                    <span className="pointer-events-none absolute top-2 right-5 font-display text-7xl leading-none text-primary/15" aria-hidden>&rdquo;</span>
+                    <blockquote className="text-lg">&ldquo;{v.quote}&rdquo;</blockquote>
+                    <figcaption className="mt-3 text-sm text-muted-foreground">{v.who}</figcaption>
+                  </figure>
+                </Reveal>
               ))}
             </div>
           )}
