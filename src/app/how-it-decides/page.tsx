@@ -1,5 +1,7 @@
 import { AlertTriangle, ArrowRight, CheckCircle2, Scale } from "lucide-react";
 import Link from "next/link";
+import { HeroBand } from "@/components/bold";
+import ShimmerLink from "@/components/ShimmerLink";
 import { SOURCES } from "@/lib/content/sources";
 import { formatDate } from "@/lib/rules/dates";
 import { classify } from "@/lib/rules/engine";
@@ -44,28 +46,37 @@ const src = (id: string) => SOURCES.find((s) => s.id === id)!;
 
 export default function HowItDecides() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <h1 className="flex items-center gap-2 font-display text-3xl font-bold tracking-tight">
-        <Scale className="h-7 w-7 text-primary" aria-hidden /> How Bond Secure decides
-      </h1>
-      <p className="mt-3 text-muted-foreground">
-        Which law applies, and whether a deadline has passed, is decided by fixed rules written in plain code, with
-        automated tests. AI never makes this decision. The rules below were checked against official NSW sources on 9 and 10
-        October 2026. NSW only. This is legal information, not legal advice.
-      </p>
+    <div>
+      <HeroBand>
+        <p className="inline-flex items-center gap-2 text-sm font-bold tracking-wider text-emerald-300 uppercase">
+          <Scale className="size-4" aria-hidden /> How it decides
+        </p>
+        <h1 className="mt-2 font-display text-4xl leading-[1.05] font-black tracking-tight text-white sm:text-6xl">
+          Tested rules,{" "}
+          <span className="bg-gradient-to-r from-emerald-300 to-sky-300 bg-clip-text text-transparent">not AI.</span>
+        </h1>
+        <p className="mt-4 max-w-2xl text-lg text-navy-muted">
+          Which law applies, and whether a deadline has passed, is decided by fixed rules written in plain code, with
+          automated tests. AI never makes this decision. The rules below were checked against official NSW sources on 9 and 10
+          October 2026. NSW only. This is legal information, not legal advice.
+        </p>
+      </HeroBand>
 
-      <h2 className="mt-8 text-xl font-semibold">The questions, in the order we ask them</h2>
-      <p className="mt-1 text-sm text-muted-foreground">The first question that matches decides the path.</p>
-      <ol className="mt-4 space-y-3">
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+      <h2 className="font-display text-3xl font-black tracking-tight">The questions, in the order we ask them</h2>
+      <p className="mt-1 text-muted-foreground">The first question that matches decides the path.</p>
+      <ol className="mt-6 ml-4 space-y-4 border-l-2 border-border pl-6 sm:ml-0 sm:pl-8">
         {STEPS.map((s, i) => (
-          <li key={s.q} className="card">
-            <p className="text-sm font-semibold text-primary">Step {i + 1}</p>
-            <p className="mt-1 font-semibold">{s.q}</p>
-            <p className="mt-1 flex gap-2 text-[15px]">
-              <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden /> {s.then}
+          <li key={s.q} className="relative rounded-3xl border border-border bg-card p-5 shadow-xl shadow-slate-900/5 sm:p-6">
+            <span className="absolute top-5 -left-[2.65rem] grid size-9 place-items-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 font-display text-sm font-black text-white ring-4 ring-background sm:-left-[3.15rem]">
+              {i + 1}
+            </span>
+            <p className="text-lg font-extrabold">{s.q}</p>
+            <p className="mt-2 flex gap-2 rounded-2xl bg-primary-soft p-3 text-[15px] font-medium">
+              <ArrowRight className="mt-1 size-4 shrink-0 text-primary" aria-hidden /> {s.then}
             </p>
             {s.sources.length > 0 && (
-              <p className="mt-2 text-xs text-muted-foreground">
+              <p className="mt-3 text-xs text-muted-foreground">
                 Source:{" "}
                 {s.sources.map((id, n) => (
                   <span key={id}>
@@ -79,33 +90,33 @@ export default function HowItDecides() {
         ))}
       </ol>
 
-      <h2 className="mt-10 text-xl font-semibold">When you&apos;re not sure</h2>
-      <p className="mt-2 text-[15px] text-muted-foreground">
+      <h2 className="mt-14 font-display text-3xl font-black tracking-tight">When you&apos;re not sure</h2>
+      <p className="mt-3 rounded-3xl border-2 border-warn/30 bg-warn-soft p-5 text-[15px] leading-relaxed text-warn">
         Every question has a &quot;not sure&quot; answer. When you use it, we run the rules again with each possible answer
         and show you where that would lead. If the answer could change, or the rules can&apos;t place you safely, we tell you
         to call a free legal service (Redfern Legal Centre, (02) 9698 7277) before you send anything.
       </p>
 
-      <h2 className="mt-10 text-xl font-semibold">Worked examples</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <h2 className="mt-14 font-display text-3xl font-black tracking-tight">Worked examples</h2>
+      <p className="mt-1 text-muted-foreground">
         Each result below is produced by running the rules on this page, not written by hand. Sample names only.
       </p>
-      <div className="mt-4 space-y-3">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {EXAMPLE_CASES.map((c) => {
           const f = { ...c.facts, moveOutDate: "2026-08-20" };
           const r = classify(f);
           const ex = explain(f);
           return (
-            <div key={c.id} className="card">
+            <div key={c.id} className="rounded-3xl border border-border bg-card p-5 shadow-xl shadow-slate-900/5">
               <div className="flex flex-wrap items-center gap-2">
-                <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${c.kind === "typical" ? "bg-primary-soft text-primary" : "bg-warn-soft text-warn"}`}>
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold uppercase ${c.kind === "typical" ? "bg-primary-soft text-primary" : "bg-warn-soft text-warn"}`}>
                   {c.kind}
                 </span>
-                <span className="font-semibold">{c.label}</span>
+                <span className="font-extrabold">{c.label}</span>
               </div>
-              <p className="mt-2 text-[15px]">
+              <p className="mt-3 rounded-2xl bg-muted p-3 text-[15px]">
                 <span className="text-muted-foreground">Result: </span>
-                <span className="font-semibold">{PATH_LABEL[r.path]}</span>
+                <span className="font-bold">{PATH_LABEL[r.path]}</span>
               </p>
               <p className="mt-1 flex items-center gap-1.5 text-sm">
                 {ex.checkWithAService ? (
@@ -125,18 +136,19 @@ export default function HowItDecides() {
         })}
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold">Known limits</h2>
-      <ul className="mt-2 list-disc space-y-1 pl-5 text-[15px] text-muted-foreground">
+      <h2 className="mt-14 font-display text-3xl font-black tracking-tight">Known limits</h2>
+      <ul className="mt-4 list-disc space-y-2 rounded-3xl border border-border bg-card p-6 pl-10 text-[15px] text-muted-foreground shadow-xl shadow-slate-900/5">
         <li>Business-day deadlines skip weekends but not public holidays, so we say &quot;about&quot; and the real date can be a day or two later.</li>
         <li>Renting from another tenant may really be a sub-tenancy under the Residential Tenancies Act; we flag it as uncertain.</li>
         <li>The boarding-house test relies on your estimate of how many people live there.</li>
         <li>No lawyer has reviewed these rules yet.</li>
       </ul>
 
-      <p className="mt-8 text-sm">
-        <Link className="underline" href="/recover">Check your own situation</Link> ·{" "}
-        <Link className="underline" href="/sources">All sources</Link>
-      </p>
+      <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <ShimmerLink href="/recover">Check your own situation <ArrowRight className="size-5" aria-hidden /></ShimmerLink>
+        <Link className="text-sm font-semibold underline" href="/sources">All sources</Link>
+      </div>
+      </div>
     </div>
   );
 }
